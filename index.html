@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo Farming in the Tower - Edu Idle Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #f0fdf4;
+            --sky-gradient: linear-gradient(135deg, #bae6fd 0%, #e0f2fe 100%);
+            --meadow-green: #86efac;
+            --meadow-border: #22c55e;
+            --panel-bg: #ffffff;
+            --panel-border: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --tower-blue: #0284c7;
+            --log-bg: #0f172a;
+            --log-text: #38bdf8;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --font-main: system-ui, -apple-system, sans-serif;
+            
+            --grade-a: #d8b4fe;
+            --grade-b: #93c5fd;
+            --grade-c: #86efac;
+            --grade-d: #fde047;
+            --grade-e: #fca5a5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        header {
+            background: var(--sky-gradient); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--accent); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .header-title h2 { font-size: 1.25rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; color: #0369a1; }
+        .header-stats { display: flex; gap: 12px; font-weight: bold; font-size: 0.95rem; background: var(--panel-bg); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--panel-border); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: center;}
+        .coin-icon { color: #eab308; margin-right: 2px; }
+        .ap-icon { color: #3b82f6; font-size: 1.1rem; }
+
+        .buff-bar { display: flex; gap: 8px; font-size: 0.8rem; margin-top: 4px; }
+        .buff-badge { background: #1e293b; color: white; padding: 2px 8px; border-radius: 12px; font-family: monospace; }
+
+        nav { display: flex; gap: 8px; padding: 10px 20px; background: #ffffff; border-bottom: 1px solid var(--panel-border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow-x: auto; }
+        .tab-btn { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--panel-border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
+        .tab-btn:hover { background-color: #e2e8f0; color: var(--text-main); }
+        .tab-btn.active { background-color: var(--accent); color: #fff; border-color: var(--accent); }
+        .tab-btn:disabled { display: none; }
+
+        main { flex: 1; overflow-y: auto; position: relative; padding-bottom: 20px; background: radial-gradient(circle at center, #f0fdf4 0%, #dcfce7 100%); }
+        .view-section { display: none; padding: 25px; height: 100%; }
+        .view-section.active { display: block; }
+
+        .teo-banner {
+            display: flex; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 12px 18px; margin-bottom: 25px; align-items: center; gap: 15px; max-width: 1000px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .teo-banner-pic { font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+        .teo-banner-speech { color: #78350f; font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
+
+        .farm-wrapper { max-width: 1200px; margin: 0 auto; position: relative; }
+        
+        .farm-pasture-paddock {
+            background-color: #6edb81;
+            background-image: 
+                radial-gradient(#5bc46e 15%, transparent 16%),
+                radial-gradient(#5bc46e 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 4px solid #16a34a;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: inset 0 6px 20px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.08);
+            position: relative;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .scenery-element { position: absolute; font-size: 2.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); pointer-events: none; z-index: 1; }
+        .scenery-tree-1 { top: 15px; left: 20px; }
+        .scenery-tree-2 { bottom: 20px; right: 20px; }
+        .scenery-flower-1 { top: 180px; left: 15px; font-size: 1.5rem; }
+        .scenery-flower-2 { bottom: 150px; right: 25px; font-size: 1.5rem; }
+        .scenery-fence-left { top: 50%; left: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.5rem; opacity: 0.8; }
+        .scenery-fence-right { top: 50%; right: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.5rem; opacity: 0.8; }
+
+        .farm-plots-container {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; z-index: 2;
+        }
+
+        .plot-card { background: transparent; border: none; padding: 0; box-shadow: none; width: 250px; position: relative; }
+        .plot-card-header {
+            text-align: center; font-weight: 800; font-size: 0.95rem; color: #042f1a; margin-bottom: 8px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); background: rgba(255,255,255,0.7); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-left: auto; margin-right: auto; width: fit-content; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.1s;
+        }
+        .plot-card:hover:not(.locked) .plot-card-header { transform: scale(1.05); background: white; }
+        .plot-card.locked .plot-card-header { color: #475569; background: rgba(226,232,240,0.8); cursor: not-allowed; }
+
+        .soil-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #4a2e1b; padding: 10px; border-radius: 14px; border: 5px solid #361f10; box-shadow: 0 8px 16px rgba(0,0,0,0.35); cursor: pointer; transition: transform 0.2s;
+        }
+        .plot-card:hover:not(.locked) .soil-grid { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,0,0,0.4); }
+        .plot-card.locked .soil-grid { background: #94a3b8; border-color: #64748b; cursor: not-allowed; transform: none; }
+
+        .soil-slot {
+            background-color: #5c3821; aspect-ratio: 1; border-radius: 8px; border: 2px dashed #2f1d11; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; pointer-events: none;
+        }
+        .soil-slot.planted { border-style: solid; border-color: #27170a; background-color: #4f2e1a; }
+        .plot-card.locked .soil-slot { background-color: #cbd5e1; border-color: #94a3b8; }
+
+        .scenery-hive-container, .scenery-pond-container, .scenery-fire-container {
+            align-self: center; display: flex; flex-direction: column; align-items: center; position: relative; background: rgba(255,255,255,0.85); border-radius: 20px; padding: 15px; width: 250px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); z-index: 2; border: 2px solid;
+        }
+        .scenery-hive-container { border-color: #fbbf24; }
+        .scenery-pond-container { border-color: #3b82f6; }
+        .scenery-fire-container { border-color: #ef4444; }
+
+        .hive-scenery-tree { font-size: 4rem; position: relative; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12)); }
+        .hive-attached { position: absolute; font-size: 1.8rem; bottom: -5px; right: 15px; animation: sway 3s ease-in-out infinite alternate; transform-origin: top center; }
+        @keyframes sway { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
+        .pond-emoji { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+        .fire-emoji { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); animation: flicker 1s infinite alternate; }
+        @keyframes flicker { 0% { opacity: 0.9; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1.02); } }
+
+        .mini-emoji { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); max-width: 90%; max-height: 90%; object-fit: contain; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        
+        .mini-timer { font-size: 0.68rem; color: #fff; font-family: monospace; font-weight: bold; background: rgba(15, 23, 42, 0.9); padding: 1px 4px; border-radius: 4px; margin-top: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+        .soil-slot.needs-water { animation: pulseDry 2s infinite; border-color: #3b82f6; }
+        .soil-slot.harvest-ready { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+        .soil-slot.rotten { filter: grayscale(70%); background-color: #3e4c41; border-color: #272f29; }
+
+        @keyframes pulseDry { 0% { box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0.6); } 70% { box-shadow: inset 0 0 0 6px rgba(59, 130, 246, 0); } 100% { box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0); } }
+
+        .quiz-menu-container { max-width: 900px; margin: 0 auto; text-align: center; }
+        .quiz-menu-title { margin-bottom: 25px; font-size: 1.5rem; color: #0284c7; font-weight: bold; }
+        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        
+        .quiz-year-card {
+            background: #ffffff; border: 2px solid var(--panel-border); border-radius: 12px; padding: 20px 15px; cursor: pointer; font-size: 1.15rem; font-weight: bold; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .quiz-year-card:hover:not(.locked) { border-color: var(--accent); transform: translateY(-2px); background: #f8fafc; }
+        
+        .status-badge { font-size: 0.75rem; padding: 3px 8px; border-radius: 10px; background: rgba(0,0,0,0.05); font-weight: normal; }
+        .status-badge.available { background: rgba(34, 197, 94, 0.15); color: #16a34a; font-weight: bold; }
+        .card-timer { font-size: 0.85rem; color: var(--warning); font-family: monospace; font-weight: bold; margin-top: 5px; }
+
+        .fullscreen-quiz-mode { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #ffffff; z-index: 200; display: none; flex-direction: column; }
+        .quiz-top-bar { background: #0f172a; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent); }
+        .btn-back-quiz { background: #334155; color: white; border: 1px solid #475569; padding: 8px 16px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-back-quiz:hover { background: #475569; }
+
+        .quiz-viewport-wrapper { flex: 1; position: relative; overflow: hidden; }
+        .quiz-pdf-viewport { width: 100%; height: 100%; background: #475569; display: block; }
+        .quiz-pdf-viewport iframe { width: 100%; height: 100%; border: none; }
+        .quiz-omr-viewport { width: 100%; height: 100%; background: #fdfbf7; color: #161b17; display: none; flex-direction: column; position: relative; }
+
+        .omr-scroller { flex: 1; overflow-y: auto; padding: 15px; max-width: 420px; margin: 0 auto; width: 100%; }
+        .omr-header-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; text-align: center; font-weight: bold; font-size: 0.9rem; color: #475569; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 6px; }
+        .omr-input-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+        .omr-input-row:hover { background-color: #f8fafc; }
+        .omr-question-number { font-weight: bold; font-size: 0.9rem; color: #1e293b; text-align: center; }
+        
+        .omr-bubble-wrapper { display: flex; justify-content: center; align-items: center; }
+        .omr-radio-input { appearance: none; width: 18px; height: 18px; border: 2px solid #64748b; border-radius: 50%; cursor: pointer; outline: none; transition: all 0.1s; position: relative; }
+        .omr-radio-input:checked { background-color: #0f172a; border-color: #0f172a; box-shadow: inset 0 0 0 3px #ffffff; }
+        .omr-radio-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .omr-feedback { text-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+
+        .omr-footer-action { background: #f8fafc; padding: 12px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; }
+        .btn-submit-omr { background: var(--accent); color: white; border: none; padding: 10px 24px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 420px; }
+        .btn-submit-omr:hover:not(:disabled) { background: var(--accent-hover); }
+        .btn-submit-omr:disabled { background: #94a3b8; cursor: not-allowed; }
+        .omr-lockout-alert { text-align: center; color: var(--danger); font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; }
+
+        .floating-view-toggle { position: absolute; bottom: 25px; right: 25px; z-index: 50; background-color: var(--tower-blue); color: white; border: none; padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; transition: transform 0.2s, background-color 0.2s; }
+        .floating-view-toggle:hover { transform: scale(1.05); background-color: #0284c7; }
+
+        .teo-avatar-container { display: flex; background: #fffbeb; border: 2px solid #fcd34d; border-radius: 12px; padding: 20px; margin-bottom: 25px; align-items: center; gap: 20px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .teo-pic { font-size: 4.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+        .teo-bubble { background: #ffffff; border: 1px solid #fcd34d; border-radius: 10px; padding: 15px; position: relative; flex: 1; color: #78350f; font-size: 1rem; line-height: 1.5; font-style: italic; }
+        .teo-bubble::after { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border-width: 10px 10px 10px 0; border-style: solid; border-color: transparent #ffffff transparent transparent; display: block; width: 0; }
+        .teo-bubble::before { content: ''; position: absolute; left: -11px; top: 50%; transform: translateY(-50%); border-width: 10px 10px 10px 0; border-style: solid; border-color: transparent #fcd34d transparent transparent; display: block; width: 0; z-index: -1; }
+
+        .shop-grid, .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .shop-card, .inventory-card { background: #ffffff; border: 2px solid var(--panel-border); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.04); transition: all 0.2s; }
+        .shop-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+        .shop-card h4 { font-size: 1.1rem; margin-bottom: 5px; color: var(--text-main); }
+        .shop-card-cost { font-size: 1.5rem; color: #b45309; font-weight: bold; margin: 10px 0; }
+        .shop-card button { background: var(--tower-blue); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; }
+        .shop-card button:hover:not(:disabled) { background: #0369a1; }
+        .shop-card button:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+
+        .inventory-card button { background: var(--accent); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-top: 10px; }
+        .inventory-card button:hover { background: var(--accent-hover); }
+
+        .rabbit-card { background: #ffffff; border: 2px solid var(--panel-border); padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 20px; }
+        .rabbit-avatar { font-size: 3rem; }
+        .rabbit-controls { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .rabbit-control-row { display: flex; align-items: center; gap: 10px; }
+        .rabbit-select { padding: 8px; border-radius: 6px; border: 1px solid var(--panel-border); background: #f8fafc; font-weight: bold; outline: none; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 300; backdrop-filter: blur(4px); }
+        .modal { background: #ffffff; border-radius: 16px; padding: 25px; width: 95%; max-width: 600px; border: 3px solid var(--accent); max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25); color: var(--text-main); position: relative;}
+        .modal h2 { margin-bottom: 15px; color: #15803d; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;}
+        .seed-selection-row { background: #f8fafc; padding: 12px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+        .seed-selection-row button { background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .grade-badge { display: inline-block; width: 20px; height: 20px; text-align: center; border-radius: 4px; color: #000; font-weight: bold; font-size: 0.75rem; line-height: 20px; margin-right: 2px; }
+        .grade-hidden { background: #e2e8f0; color: #64748b; }
+
+        .btn-close-modal { background: #64748b; border: none; color: white; padding: 10px; width: 100%; border-radius: 6px; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .action-flex-group { display: flex; gap: 12px; margin-top: 25px; }
+        .action-flex-group button { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; color: white;}
+        .btn-action-clear { background: var(--danger); }
+
+        .game-alert-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 500; }
+        .game-alert-box { background: #ffffff; border: 2px solid var(--tower-blue); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; text-align: center; color: var(--text-main); }
+        .game-alert-message { margin: 15px 0 20px 0; font-size: 1rem; line-height: 1.4; color: var(--text-muted); }
+        .btn-alert-ok { background: var(--tower-blue); border: none; color: white; padding: 10px 30px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; }
+
+        .tool-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .tool-btn { flex: 1; background: #e2e8f0; border: 2px solid #cbd5e1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #475569; }
+        .tool-btn.active { background: var(--accent); color: white; border-color: var(--accent-hover); box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3); transform: translateY(-2px); }
+        
+        .manager-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #4a2e1b; padding: 15px; border-radius: 14px; border: 5px solid #361f10; width: fit-content; margin: 0 auto 20px; }
+        .mgr-slot { background-color: #5c3821; width: 80px; height: 80px; border-radius: 8px; border: 2px dashed #2f1d11; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.1s; }
+        .mgr-slot:hover { border-color: white; background-color: #70472d; }
+        .mgr-slot.planted { border-style: solid; border-color: #27170a; background-color: #4f2e1a; }
+        .staged-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 3px solid #fde047; border-radius: 6px; box-shadow: 0 0 15px rgba(253, 224, 71, 0.6); z-index: 10;}
+        
+        .pot-slot { width: 60px; height: 60px; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: #f8fafc; cursor: pointer;}
+        .pot-slot.filled { border-style: solid; border-color: var(--accent); background: #f0fdf4; }
+        .pot-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+
+        .staged-seed-box {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .staged-seed-box.selected {
+            border-color: #fbbf24;
+            background-color: #fef3c7;
+            box-shadow: 0 0 8px rgba(251, 191, 38, 0.5);
+        }
+
+        @media (max-width: 768px) { 
+            header { flex-direction: column; gap: 10px; text-align: center; }
+            .floating-view-toggle { bottom: 15px; right: 15px; font-size: 0.95rem; padding: 10px 20px; }
+            .farm-pasture-paddock { padding: 15px; border-width: 2px; }
+            .plot-card { width: 100%; max-width: 280px; }
+            .scenery-element { opacity: 0.2; }
+            .scenery-fence-left, .scenery-fence-right { display: none; }
+            .scenery-hive-container, .scenery-pond-container, .scenery-fire-container { width: 100%; max-width: 280px; }
+            .teo-avatar-container { flex-direction: column; text-align: center; gap: 10px; }
+            .teo-bubble::after, .teo-bubble::before { display: none; }
+            .rabbit-card { flex-direction: column; text-align: center; }
+            .rabbit-control-row { flex-direction: column; align-items: stretch; text-align: left; }
+            .rabbit-control-row label { width: auto; margin-bottom: 5px; }
+            .action-flex-group { flex-direction: column; }
+            .view-section { padding: 15px; }
+            .tool-bar { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-spinner">⏳</div>
+        <h2 style="margin-top: 20px; color: var(--tower-blue);">Connecting to Tower Environment...</h2>
+    </div>
+
+    <header>
+        <div class="header-title">
+            <h2>🗼 Solo Farming in the Tower</h2>
+            <div class="buff-bar" id="buff-bar-container"></div>
+        </div>
+        <div class="header-stats">
+            <span id="stat-coins"><span class="coin-icon">💰</span>0 Tower Coins</span>
+            <span id="stat-ap" title="Action Points (Recovers 1 per hour)"><span class="ap-icon">⚡</span>24 AP</span>
+        </div>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" onclick="switchTab('farm')">🌱 My Farm</button>
+        <button class="tab-btn" onclick="switchTab('quiz')">📝 Tower Quizzes</button>
+        <button class="tab-btn" id="tab-shop" onclick="switchTab('shop')" style="display:none;">🐱 Teo's Shop & Storage</button>
+        <button class="tab-btn" id="tab-rabbit" onclick="switchTab('rabbit')" style="display:none;">🐰 Rabbit Helpers</button>
+    </nav>
+
+    <main>
+        <!-- Farm View -->
+        <div id="view-farm" class="view-section active">
+            <div class="teo-banner" id="teo-banner-advisor">
+                <div class="teo-banner-pic">🐱</div>
+                <div class="teo-banner-speech" id="teo-banner-text">Loading insights...</div>
+            </div>
+
+            <div class="farm-wrapper">
+                <div class="farm-pasture-paddock">
+                    <!-- Dynamic Scenery Elements -->
+                    <div class="scenery-element scenery-tree-1">🌳</div>
+                    <div class="scenery-element scenery-tree-2">🌳</div>
+                    <div class="scenery-element scenery-flower-1">🌸</div>
+                    <div class="scenery-element scenery-flower-2">🌸</div>
+                    <div class="scenery-element scenery-fence-left">🚧</div>
+                    <div class="scenery-element scenery-fence-right">🚧</div>
+
+                    <!-- Soil plots -->
+                    <div class="farm-plots-container" id="farm-plots-target">
+                        <!-- Plot grids generated here -->
+                    </div>
+
+                    <!-- Extra Mechanics Row (Campfire, Pond, Apiary) -->
+                    <div class="farm-plots-container" style="margin-top: 20px;">
+                        
+                        <!-- Campfire / Cooking (Unlocks at 6 Completed Sets) -->
+                        <div class="scenery-fire-container" id="scenery-fire-target" style="display: none;">
+                            <div class="fire-emoji">🏕️🔥🍲</div>
+                            <p style="font-weight: 800; font-size: 0.95rem; color: #7f1d1d; margin-bottom: 5px;">Tower Campfire</p>
+                            <p style="font-weight: bold; margin: 4px 0; font-size: 0.9rem; color: #b91c1c; text-align:center;" id="cooking-status-text">Ready to Cook</p>
+                            <button id="btn-cook-action" class="btn-action-sell" onclick="openCookingModal()" style="width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: white; background: #ef4444; font-size: 0.85rem; margin-top: 10px;">Cook Meal (1 ⚡)</button>
+                        </div>
+
+                        <!-- Piranha Pond (Unlocks at 7 Completed Sets) -->
+                        <div class="scenery-pond-container" id="scenery-pond-target" style="display: none;">
+                            <div class="pond-emoji">🌊🐟</div>
+                            <p style="font-weight: 800; font-size: 0.95rem; color: #1e3a8a; margin-bottom: 5px;">Piranha Pond</p>
+                            <p style="font-weight: bold; margin: 4px 0; font-size: 1.1rem; color: #1d4ed8;" id="pond-piranha-text">Fish: 0</p>
+                            <p style="font-size: 0.75rem; color: #1e40af; margin-bottom: 10px;">Generates 1 per 10 mins.</p>
+                            <button class="btn-action-sell" onclick="huntPiranhas()" style="width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: white; background: #3b82f6; font-size: 0.85rem;">Hunt Fish (1 ⚡)</button>
+                        </div>
+
+                        <!-- Apiary Bee Hive (Unlocks at 5 Completed Sets) -->
+                        <div class="scenery-hive-container" id="scenery-hive-target" style="display: none;">
+                            <div class="hive-scenery-tree">🌳<div class="hive-attached">🐝🍯</div></div>
+                            <p style="font-weight: 800; font-size: 0.95rem; color: #78350f; margin-bottom: 5px;">Queen Bee Apiary</p>
+                            <p style="font-weight: bold; margin: 4px 0; font-size: 1.1rem; color: #b45309;" id="hive-honey-text">Uncollected: 0</p>
+                            <p style="font-size: 0.75rem; color: #78350f; margin-bottom: 10px;">Generates 1 per 10 mins.</p>
+                            <button class="btn-action-sell" onclick="collectHoney()" style="width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: #0f172a; background: #fbbf24; font-size: 0.85rem;">Collect Honey (1 ⚡)</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="view-quiz" class="view-section">
+            <div class="quiz-menu-container">
+                <h3 class="quiz-menu-title">Select a Historical Archive to Verify Knowledge</h3>
+                <div class="quiz-grid" id="quiz-year-selector"></div>
+            </div>
+        </div>
+
+        <div id="view-shop" class="view-section">
+            <div class="teo-avatar-container">
+                <div class="teo-pic">🐱</div>
+                <div class="teo-bubble" id="teo-speech">"Nya! Plant seeds, harvest crops! Sell crops for coins or extract them into seeds to breed stronger generations, nya!"</div>
+            </div>
+            
+            <h3 style="font-size: 1.15rem; margin-bottom: 12px; border-bottom: 1px solid var(--panel-border); padding-bottom: 6px; color: #1e3f20;">Teo's Supply Shop</h3>
+            <div class="shop-grid" id="shop-container"></div>
+            
+            <h3 style="margin-top: 40px; border-top: 1px solid var(--panel-border); padding-top: 25px; font-size: 1.15rem; margin-bottom: 12px; color: #1e3f20;">🎒 Bag Storage (Seeds)</h3>
+            <div class="inventory-grid" id="inventory-container"></div>
+
+            <h3 style="margin-top: 40px; border-top: 1px solid var(--panel-border); padding-top: 25px; font-size: 1.15rem; margin-bottom: 12px; color: #1e3f20;">📦 Farm Storage (Ingredients)</h3>
+            <div class="inventory-grid" id="crop-container"></div>
+        </div>
+
+        <div id="view-rabbit" class="view-section">
+            <h3 style="font-size: 1.25rem; color: #1e3f20;">🐰 Rabbit Helper Management</h3>
+            <p style="color: var(--text-muted); margin-top: 4px;">Assign rabbits to automate your plots. Costs 1 ⚡ to reassign a standard rabbit.</p>
+            
+            <div id="rabbit-management-container" style="max-width: 800px; margin: 25px auto 0;">
+                <!-- Rabbit assignments injected here -->
+            </div>
+        </div>
+    </main>
+
+    <div id="fullscreen-quiz-container" class="fullscreen-quiz-mode">
+        <div class="quiz-top-bar">
+            <button class="btn-back-quiz" onclick="exitQuizWorkspace()">❌ Leave Archive</button>
+            <h3 id="quiz-workspace-title" style="color: white; font-size: 1.1rem;">Verifying Tower Access Coordinates...</h3>
+            <div style="width: 140px;"></div>
+        </div>
+        
+        <div class="quiz-viewport-wrapper">
+            <div class="quiz-pdf-viewport" id="quiz-pdf-view"><iframe id="pdf-frame" src=""></iframe></div>
+            <div class="quiz-omr-viewport" id="quiz-omr-view">
+                <div class="omr-scroller">
+                    <div id="omr-lockout-text" class="omr-lockout-alert" style="display:none;">
+                        Archived segment sealed. Review your graded answers below. 
+                        Cooldown remains: <span id="omr-countdown-inline" style="font-family: monospace;">12:00:00</span>
+                    </div>
+                    <div class="omr-header-row"><div>No.</div><div>A</div><div>B</div><div>C</div><div>D</div><div></div></div>
+                    <div id="omr-sheet-target"></div>
+                </div>
+                <div class="omr-footer-action"><button id="btn-submit-quiz" class="btn-submit-omr" onclick="submitQuiz()">Submit Completed Sheet (Cost: 1 ⚡)</button></div>
+            </div>
+            <button class="floating-view-toggle" id="btn-mode-toggle" onclick="toggleOptionBWorkspaceMode()">
+                <span id="toggle-icon">✏️</span> <span id="toggle-text">Open Answer Sheet (→)</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-plot-manager">
+        <div class="modal" style="max-width: 500px; text-align: center;">
+            <h2 id="plot-mgr-title">Plot Management</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Select a tool, click slots to stage actions, then execute all at once.</p>
+            
+            <div class="tool-bar">
+                <button class="tool-btn active" id="tool-btn-plant" onclick="setPlotTool('plant')">🌱 Plant</button>
+                <button class="tool-btn" id="tool-btn-water" onclick="setPlotTool('water')">💧 Water</button>
+                <button class="tool-btn" id="tool-btn-harvest" onclick="setPlotTool('harvest')">🌾 Harvest/Clear</button>
+            </div>
+
+            <div class="manager-grid" id="plot-mgr-grid">
+                <!-- 9 slots generated via JS -->
+            </div>
+
+            <div class="action-flex-group" style="margin-top: 15px;">
+                <button style="background: var(--tower-blue); color: white;" onclick="executePlotActions()">Execute Actions (Cost: 1 ⚡)</button>
+            </div>
+            <button class="btn-close-modal" onclick="closeModal('modal-plot-manager')">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-plant-type-select">
+        <div class="modal" style="max-width: 420px; z-index: 305;">
+            <h2>Choose Seed Type</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; text-align: center;">Select which crop category seeds to plant.</p>
+            <div class="flex flex-col gap-3" id="plant-type-list">
+                <!-- Seed types dynamically rendered -->
+            </div>
+            <button class="btn-close-modal" onclick="closeModal('modal-plant-type-select')">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-plant-select">
+        <div class="modal" style="z-index: 310;">
+            <h2>Select Specific Seeds</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;" id="staged-limit-counter">Selected: 0 / 9 slots available</p>
+            <div id="plant-seed-list" style="max-height: 320px; overflow-y: auto; padding-right: 4px;"></div>
+            <div class="action-flex-group" style="margin-top: 15px;">
+                <button id="btn-confirm-staged-seeds" style="background: var(--accent); color: white;" onclick="confirmStagedSeedsSelection()">Confirm Selection</button>
+            </div>
+            <button class="btn-close-modal" onclick="closeModal('modal-plant-select')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Cooking Pot Modal -->
+    <div class="modal-overlay" id="modal-cooking">
+        <div class="modal" style="max-width: 600px;">
+            <h2>Campfire Cooking Pot</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Combine ingredients. Different recipes provide different timed buffs!</p>
+            
+            <div style="background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px; color: #334155; text-align: center;">Pot Contents (<span id="cook-pot-count">0</span> / <span id="cook-pot-max">9</span>)</h4>
+                <div class="pot-container" id="cook-pot-slots">
+                    <!-- Slots rendered here -->
+                </div>
+                <p id="cook-recipe-prediction" style="text-align: center; font-weight: bold; color: var(--tower-blue); margin-top: 10px;">Recipe: ???</p>
+            </div>
+
+            <h4 style="margin-bottom: 10px; color: #334155;">Available Ingredients</h4>
+            <div id="cook-inventory-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 10px;">
+                <!-- Inventory buttons rendered here -->
+            </div>
+
+            <div class="action-flex-group">
+                <button style="background: #ef4444; color: white;" onclick="startCooking()">Ignite Fire & Cook (Cost: 1 ⚡)</button>
+            </div>
+            <button class="btn-close-modal" onclick="closeModal('modal-cooking')">Close</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-crop-manager">
+        <div class="modal" style="max-width: 600px;">
+            <h2>Manage <span id="mgr-crop-name">Crops</span></h2>
+            <div id="mgr-crop-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+            <button class="btn-close-modal" onclick="closeModal('modal-crop-manager')">Close Storage</button>
+        </div>
+    </div>
+
+    <div class="game-alert-overlay" id="game-alert">
+        <div class="game-alert-box">
+            <h3 id="game-alert-title" style="color: var(--tower-blue); font-size:1.4rem; margin-bottom: 10px; border-bottom: 2px solid #e2e8f0; padding-bottom:10px;">Notice</h3>
+            <div class="game-alert-message" id="game-alert-msg" style="margin-bottom: 25px;"></div>
+            <button class="btn-alert-ok" onclick="closeGameAlert()">Acknowledge</button>
+        </div>
+    </div>
+
+    <script type="module">
+        let db, auth, currentUser, userDocRef;
+        let isSaving = false;
+        let cloudSaveTimer = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'solo-tower-farm-v2';
+
+        let initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged;
+        let getFirestore, doc, setDoc, getDoc;
+
+        // --- GAME DATA & STATE ---
+        const GRADE_VALUES = { 1: 'E', 2: 'D', 3: 'C', 4: 'B', 5: 'A' };
+        const GRADE_MULTI = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
+        const ROT_MULTI = { 1: 0.33, 2: 0.66, 3: 1.0, 4: 1.33, 5: 1.66 };
+
+        // QUALITY MULTIPLIERS AFFECT GROWING DURATION (A: 20% faster, B: 10% faster, C: default, D: 10% slower, E: 20% slower)
+        const QUALITY_MULTIPLIERS = { 
+            5: 0.8, // A
+            4: 0.9, // B
+            3: 1.0, // C
+            2: 1.1, // D
+            1: 1.2  // E
+        };
+        
+        const CROP_TYPES = {
+            greenOnion: { id: 'greenOnion', name: "Green Onion", emoji: "🧅", growTime: 900, rotTime: 900, basePrice: 1 }, 
+            tomato: { id: 'tomato', name: "Cherry Tomato", emoji: "🍅", growTime: 3600, rotTime: 3600, basePrice: 5 }, 
+            potato: { id: 'potato', name: "Blue Moon Potato", emoji: "🍠", growTime: 14400, rotTime: 14400, basePrice: 15 } 
+        };
+
+        const QUIZ_DATA = {
+            "2025": { pdfUrl: "https://drive.google.com/file/d/1bTI5yLbs6iz6HPi0VN_6eATJ4cISfivY/preview", answers: ["A","D","B","C","D","B","A","D","D","C","B","B","B","D","C","A","C","B","A","C"] },
+            "2024": { pdfUrl: "https://drive.google.com/file/d/1jz9sZVzs3dnIY8m8NFcBFdQ5LrRQbf0Y/preview", answers: ["B","D","C","A","D","A","B","B","D","A","C","C","A","D","D","D","B","C","C","B"] },
+            "2023": { pdfUrl: "https://drive.google.com/file/d/1Z3mWsdpJp5tJ41FpDzPpAs1i194Nergl/preview", answers: ["A","C","D","B","D","C","D","B","C","D","B","A","C","D","D","D","D","C","B","B"] },
+            "2022": { pdfUrl: "https://drive.google.com/file/d/1g70OknDNGmz_fSzd7mwocH8G8-t4rwOg/preview", answers: ["A","C","C","D","B","B","D","A","B","C","A","B","A","A","D","A","C","B","D","C"] },
+            "2021": { pdfUrl: "https://drive.google.com/file/d/1u34RdM6_uv0oB3sGL6caiGQ6HqWQVTwW/preview", answers: ["B","D","C","A","C","C","C","C","B","B","A","A","A","D","D","D","B","A","B","C"] },
+            "2020": { pdfUrl: "https://drive.google.com/file/d/1l8QtrVf-Gd6A-JMfUMBt2CIo3tUdrsAa/preview", answers: ["B","C","C","B","A","A","D","B","C","B","D","D","C","A","D","D","D","B","B","A"] },
+            "2019": { pdfUrl: "https://drive.google.com/file/d/11Ul-n37P8eo0znGL28cCFWOQ_VUizhlp/preview", answers: ["B","B","D","B","B","C","D","A","B","A","D","C","B","A","C","A","D","D","C","A"] },
+            "2018": { pdfUrl: "https://drive.google.com/file/d/1redP6-nwB98oot9ukTHL5smaxCgqtCrK/preview", answers: ["B","C","C","D","C","D","A","C","B","B","A","C","B","C","D","D","B","D","B","D"] },
+            "2017": { pdfUrl: "https://drive.google.com/file/d/1d-5pvYXGUjQ0XiIg50swE1TtT09d5Txd/preview", answers: ["B","A","A","B","C","C","D","B","A","D","D","D","C","D","C","D","B","C","B","A"] },
+            "2016": { pdfUrl: "https://drive.google.com/file/d/17IROr-5z5cqYKi2Q3iRJ0lOa8Ilgy5UD/preview", answers: ["B","C","A","D","A","A","A","B","C","D","C","C","B","D","C","D","B","D","D","C"] }
+        };
+
+        let state = {
+            coins: 0,
+            ap: 24,
+            lastApTime: Date.now(),
+            completedSets: 0,
+            lastSaveTime: Date.now(),
+            unlocked: { shop: false, rabbit: false, land: false, firstDiscountUsed: false, fire: false, pond: false, warriorRabbit: false, potUpgrade: false, recipes: false }, 
+            maxPlots: 1, 
+            plots: [], 
+            inventory: { greenOnion: [], tomato: [], potato: [] }, 
+            crops: { greenOnion: [], tomato: [], potato: [] },
+            honey: 0, uncollectedHoney: 0, lastHoneyTime: Date.now(),
+            piranhas: 0, pondPiranhas: 0, lastPondTime: Date.now(),
+            quizzes: {}, currentQuizYear: null,
+            rabbits: [{ assignedPlot: -1, task: '' }, { assignedPlot: -1, task: '' }, { assignedPlot: -1, task: '' }],
+            cooking: { active: false, endTime: 0, recipe: null, name: '' },
+            potSize: 9,
+            buffs: { 
+                coinMulti: { active: false, expiry: 0 }, 
+                seeSize: { active: false, expiry: 0 }, 
+                seeQuality: { active: false, expiry: 0 }, 
+                seeMagic: { active: false, expiry: 0 } 
+            },
+            shopSeedCounter: { greenOnion: 0, tomato: 0, potato: 0 }
+        };
+
+        let activeTab = 'farm';
+        let currentWorkspaceMode = 'pdf';
+        const COOLDOWN_MS = 12 * 60 * 60 * 1000; 
+
+        // Plot Manager State
+        let mgrPlotIndex = -1;
+        let mgrTool = 'plant'; 
+        let stagedActions = new Array(9).fill(null); 
+        let stagingTargetSlot = -1;
+
+        // Persistent Staging Multi-select State
+        let currentSeedingTypeKey = '';
+        let temporarySelectedSeedIndices = []; // Stores indices from state.inventory[currentSeedingTypeKey]
+
+        // Cooking State
+        let potIngredients = []; 
+
+        async function initApp() {
+            loadGameFromLocal();
+            try {
+                const firebaseAppModule = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                const firebaseAuthModule = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                const firebaseFirestoreModule = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                initializeApp = firebaseAppModule.initializeApp; getAuth = firebaseAuthModule.getAuth; signInAnonymously = firebaseAuthModule.signInAnonymously; signInWithCustomToken = firebaseAuthModule.signInWithCustomToken; onAuthStateChanged = firebaseAuthModule.onAuthStateChanged;
+                getFirestore = firebaseFirestoreModule.getFirestore; doc = firebaseFirestoreModule.doc; setDoc = firebaseFirestoreModule.setDoc; getDoc = firebaseFirestoreModule.getDoc;
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+                if(firebaseConfig) {
+                    const app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth);
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) { currentUser = user; userDocRef = doc(db, 'artifacts', appId, 'users', user.uid, 'gamedata', 'state'); await loadGameFromCloud(); startGameLogic(); }
+                    });
+                } else startGameLogic();
+            } catch(e) { startGameLogic(); }
+        }
+
+        function loadGameFromLocal() {
+            try { const saved = localStorage.getItem('soloTowerFarmingStatev8'); if (saved) state = { ...state, ...JSON.parse(saved) }; } catch(e) {}
+        }
+
+        async function loadGameFromCloud() {
+            if(!userDocRef || !getDoc) return;
+            try { const docSnap = await getDoc(userDocRef); if (docSnap.exists()) state = { ...state, ...docSnap.data() }; } catch (error) {}
+        }
+
+        function triggerSaveGame() {
+            updateHeader(); updateTeoBannerAdvisor(); state.lastSaveTime = Date.now();
+            try { localStorage.setItem('soloTowerFarmingStatev8', JSON.stringify(state)); } catch(e) {}
+            renderShop();
+            if(!userDocRef || !currentUser || !setDoc) return;
+            if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
+            cloudSaveTimer = setTimeout(async () => {
+                if (isSaving) return; isSaving = true;
+                try { await setDoc(userDocRef, state); } catch (error) {} isSaving = false;
+            }, 3000); 
+        }
+
+        function startGameLogic() {
+            document.getElementById('loading-screen').style.display = 'none';
+
+            // State Migrations & Counter Safety
+            if(typeof state.ap === 'undefined') state.ap = 24;
+            if(!state.buffs) state.buffs = { coinMulti: { active: false, expiry: 0 }, seeSize: { active: false, expiry: 0 }, seeQuality: { active: false, expiry: 0 }, seeMagic: { active: false, expiry: 0 } };
+            if(!state.buffs.seeQuality) state.buffs.seeQuality = { active: false, expiry: 0 };
+            if(!state.cooking) state.cooking = { active: false, endTime: 0, recipe: null, name: '' };
+            if(!state.potSize) state.potSize = 9;
+            if(!state.shopSeedCounter) state.shopSeedCounter = { greenOnion: 0, tomato: 0, potato: 0 };
+            if(typeof state.uncollectedHoney === 'undefined') state.uncollectedHoney = 0;
+            if(typeof state.piranhas === 'undefined') { state.piranhas = 0; state.pondPiranhas = 0; state.lastPondTime = Date.now(); }
+            
+            // Expand Max Plots limits dynamically up to 6 Plots
+            while(state.plots.length < 6) {
+                let initialSlots = []; for(let s=0; s<9; s++) initialSlots.push({ cropType: null, progress: 0, isWatered: false, seedData: null });
+                state.plots.push({ slots: initialSlots });
+            }
+            while(state.rabbits.length < 3) state.rabbits.push({ assignedPlot: -1, task: '' });
+
+            processOfflineProgress();
+            
+            updateHeader(); renderTabs(); renderFarm(); renderQuizSelector(); renderStorage(); renderRabbitManagement(); updateTeoBannerAdvisor();
+            setInterval(gameLoop, 1000);
+        }
+
+        function processOfflineProgress() {
+            const now = Date.now();
+            const elapsedSec = Math.floor((now - state.lastSaveTime) / 1000);
+            
+            if (elapsedSec > 0) {
+                const offlineAp = Math.floor((now - state.lastApTime) / 3600000);
+                if (offlineAp > 0) { state.ap = Math.min(24, state.ap + offlineAp); state.lastApTime += offlineAp * 3600000; }
+
+                const allowedRabbits = state.completedSets >= 4 ? 2 : (state.completedSets >= 2 ? 1 : 0);
+                const rabbitTasks = { water: new Set(), harvest: new Set() };
+                for(let i = 0; i < allowedRabbits; i++) {
+                    const rab = state.rabbits[i];
+                    if(rab.assignedPlot >= 0 && rab.assignedPlot < state.maxPlots && rab.task) {
+                        rabbitTasks[rab.task].add(rab.assignedPlot);
+                    }
+                }
+
+                state.plots.forEach((plot, plotIndex) => {
+                    if (rabbitTasks.water.has(plotIndex)) {
+                        plot.slots.forEach(slot => {
+                            if (slot.cropType && !slot.isWatered && getSlotStage(slot) < 4) {
+                                slot.isWatered = true;
+                            }
+                        });
+                    }
+
+                    const isFast = state.buffs.seeQuality.active && state.buffs.seeQuality.expiry > now;
+                    const speedMulti = isFast ? 3 : 1;
+                    const effectiveElapsed = elapsedSec * speedMulti;
+
+                    plot.slots.forEach((slot) => {
+                        if (slot.cropType && slot.isWatered) {
+                            slot.progress += effectiveElapsed;
+                        }
+                    });
+
+                    // Automated harvest checks (Wait until all 9 crops are fully grown and ready)
+                    if (rabbitTasks.harvest.has(plotIndex)) {
+                        let allNineOccupied = true;
+                        let allNineReady = true;
+                        plot.slots.forEach(slot => {
+                            if (!slot.cropType) { allNineOccupied = false; }
+                            else {
+                                const stage = getSlotStage(slot);
+                                if (stage < 4) { allNineReady = false; }
+                            }
+                        });
+
+                        if (allNineOccupied && allNineReady && state.ap >= 1) {
+                            state.ap -= 1;
+                            plot.slots.forEach((slot, slotIndex) => {
+                                let parentGen = slot.seedData ? (slot.seedData.gen || 0) : 0;
+                                state.crops[slot.cropType].push({
+                                    size: slot.seedData ? slot.seedData.size : 3,
+                                    quality: slot.seedData ? slot.seedData.quality : 3,
+                                    spell: slot.seedData ? slot.seedData.spell : 3,
+                                    gen: parentGen + 1,
+                                    parentPlot: plotIndex + 1,
+                                    parentSlot: slotIndex + 1
+                                });
+                                plot.slots[slotIndex] = { cropType: null, progress: 0, isWatered: false, seedData: null };
+                            });
+                        }
+                    }
+                });
+
+                if (state.unlocked.pond) {
+                    const pondTimeElapsed = now - state.lastPondTime;
+                    const pondGained = Math.floor(pondTimeElapsed / 600000);
+                    if (pondGained > 0) {
+                        state.pondPiranhas += pondGained; 
+                        state.lastPondTime += pondGained * 600000;
+                    }
+                    if (state.unlocked.warriorRabbit && state.rabbits[2].assignedPlot === 'pond' && state.rabbits[2].task === 'hunt') {
+                        state.piranhas += state.pondPiranhas;
+                        state.pondPiranhas = 0;
+                    }
+                }
+
+                if (state.completedSets >= 5) {
+                    const honeyTimeElapsed = now - state.lastHoneyTime;
+                    const honeyGained = Math.floor(honeyTimeElapsed / 600000); 
+                    if (honeyGained > 0) { state.uncollectedHoney += honeyGained; state.lastHoneyTime += honeyGained * 600000; }
+                }
+            }
+            triggerSaveGame();
+        }
+
+        function gameLoop() {
+            let stateChanged = false;
+            const now = Date.now();
+
+            ['coinMulti', 'seeSize', 'seeQuality', 'seeMagic'].forEach(b => {
+                if (state.buffs[b].active && now > state.buffs[b].expiry) {
+                    state.buffs[b].active = false; stateChanged = true;
+                    updateHeader(); if(activeTab === 'farm') renderFarm();
+                }
+            });
+
+            if (now - state.lastApTime >= 3600000) {
+                state.ap = Math.min(24, state.ap + 1); state.lastApTime += 3600000; stateChanged = true;
+            }
+
+            // Pond regeneration (no cap limits!)
+            if (state.unlocked.pond && now - state.lastPondTime >= 600000) {
+                state.pondPiranhas += 1; state.lastPondTime += 600000; stateChanged = true;
+                
+                if (state.unlocked.warriorRabbit && state.rabbits[2].assignedPlot === 'pond' && state.rabbits[2].task === 'hunt' && state.pondPiranhas > 0) {
+                    state.piranhas += state.pondPiranhas;
+                    state.pondPiranhas = 0;
+                }
+            }
+
+            if (state.completedSets >= 5 && now - state.lastHoneyTime >= 600000) {
+                state.uncollectedHoney++; state.lastHoneyTime += 600000; stateChanged = true;
+            }
+
+            if (state.cooking.active && now >= state.cooking.endTime) {
+                applyCookingBuff(state.cooking.recipe, state.cooking.magicAvg);
+                state.cooking.active = false; state.cooking.recipe = null; stateChanged = true;
+                showCustomNotification(`Campfire Cooking Completed`, `Your ${state.cooking.name} has finished cooking and its effects are now active!`);
+            }
+
+            const speedMulti = state.buffs.seeQuality.active ? 3 : 1; 
+            state.plots.forEach((plot) => {
+                plot.slots.forEach((slot) => {
+                    if (slot.cropType && slot.isWatered) { slot.progress += speedMulti; stateChanged = true; }
+                });
+            });
+
+            // Automated Rabbit Mechanics
+            const allowedRabbits = state.completedSets >= 4 ? 2 : (state.completedSets >= 2 ? 1 : 0);
+            for(let i=0; i<allowedRabbits; i++) {
+                const rab = state.rabbits[i];
+                if(rab.assignedPlot >= 0 && rab.assignedPlot < state.maxPlots && rab.task) {
+                    const plot = state.plots[rab.assignedPlot];
+                    
+                    if (rab.task === 'water') {
+                        for(let s=0; s<9; s++) {
+                            const slot = plot.slots[s];
+                            if(slot.cropType && !slot.isWatered && getSlotStage(slot) < 4) {
+                                slot.isWatered = true;
+                                stateChanged = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // AP Harvest automation rule: Wait until all 9 plot slots are ready to execute 1-AP harvest
+                    if (rab.task === 'harvest') {
+                        let allNineOccupied = true;
+                        let allNineReady = true;
+                        for(let s=0; s<9; s++) {
+                            const slot = plot.slots[s];
+                            if (!slot.cropType) { allNineOccupied = false; }
+                            else {
+                                const stage = getSlotStage(slot);
+                                if (stage < 4) { allNineReady = false; }
+                            }
+                        }
+
+                        if (allNineOccupied && allNineReady && state.ap >= 1) {
+                            state.ap -= 1;
+                            for(let s=0; s<9; s++) {
+                                const slot = plot.slots[s];
+                                let parentGen = slot.seedData ? (slot.seedData.gen || 0) : 0;
+                                state.crops[slot.cropType].push({
+                                    size: slot.seedData ? slot.seedData.size : 3,
+                                    quality: slot.seedData ? slot.seedData.quality : 3,
+                                    spell: slot.seedData ? slot.seedData.spell : 3,
+                                    gen: parentGen + 1,
+                                    parentPlot: rab.assignedPlot + 1,
+                                    parentSlot: s + 1
+                                });
+                                plot.slots[s] = { cropType: null, progress: 0, isWatered: false, seedData: null };
+                            }
+                            stateChanged = true;
+                            showCustomNotification(`Automatic Plot Harvested`, `Your Rabbit Helper harvested Plot ${rab.assignedPlot + 1} entirely, using 1 AP!`);
+                        }
+                    }
+                }
+            }
+
+            if (activeTab === 'farm') renderFarm();
+            if (activeTab === 'shop') renderStorage();
+            if (activeTab === 'quiz') { updateQuizMenuTimers(); if (document.getElementById('fullscreen-quiz-container').style.display === 'flex') updateWorkspaceTimer(); }
+            if (stateChanged && now % 5000 < 1000) triggerSaveGame();
+            if (now % 1000 < 50) updateHeader(); 
+        }
+
+        function updateWorkspaceTimer() {
+            if (!state.currentQuizYear) return;
+            const alertText = document.getElementById('omr-lockout-text');
+            const inlineCountdown = document.getElementById('omr-countdown-inline');
+            const quizRecord = state.quizzes[state.currentQuizYear];
+            if (!quizRecord) return;
+            
+            const timeLeft = (quizRecord.lastAttempt + COOLDOWN_MS) - Date.now();
+            
+            if (timeLeft > 0) {
+                if (alertText.style.display === 'none') buildInteractiveOMR(); 
+                const hr = Math.floor(timeLeft / 3600000).toString().padStart(2, '0');
+                const mn = Math.floor((timeLeft % 3600000) / 60000).toString().padStart(2, '0');
+                const sc = Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0');
+                inlineCountdown.innerText = `${hr}:${mn}:${sc}`;
+            } else {
+                if (alertText.style.display !== 'none') buildInteractiveOMR();
+            }
+        }
+
+        function formatTimeRemaining(secondsTotal) {
+            const h = Math.floor(secondsTotal / 3600); const m = Math.floor((secondsTotal % 3600) / 60).toString().padStart(2, '0'); const s = Math.floor(secondsTotal % 60).toString().padStart(2, '0');
+            return h > 0 ? `${h.toString().padStart(2, '0')}:${m}:${s}` : `${m}:${s}`;
+        }
+
+        // Box-Muller normal distribution centered around parent's respective stat (Clamped 1-5, independent)
+        function generateNormalStat(parentStat) {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            let raw = parentStat + (z * 0.72); 
+            return Math.max(1, Math.min(5, Math.round(raw)));
+        }
+
+        function getGradeBadge(val) {
+            const char = GRADE_VALUES[val] || 'C';
+            const cls = 'grade-' + char.toLowerCase();
+            return `<span class="grade-badge ${cls}">${char}</span>`;
+        }
+
+        // Shop baseline seeds start completely at Rank C (3) for all 3 properties
+        function createShopSeed(type) {
+            state.shopSeedCounter[type]++;
+            const num = state.shopSeedCounter[type];
+            return {
+                type: type,
+                size: 3,
+                quality: 3,
+                spell: 3,
+                gen: 0,
+                name: `${CROP_TYPES[type].name} Seed #${num}`
+            };
+        }
+
+        // Creating shop bags with baseline seeds
+        function createShopSeedBag(type, count=9) {
+            let bag = [];
+            for(let i=0; i<count; i++) bag.push(createShopSeed(type));
+            return bag;
+        }
+
+        function getAdjustedGrowTime(slot) {
+            if (!slot.cropType || !slot.seedData) return 999;
+            const baseTime = CROP_TYPES[slot.cropType].growTime;
+            const qualityValue = slot.seedData.quality || 3;
+            const qualityMulti = QUALITY_MULTIPLIERS[qualityValue] || 1.0;
+            return baseTime * qualityMulti;
+        }
+
+        function getSlotStage(slot) {
+            if(!slot.cropType) return 0; 
+            const def = CROP_TYPES[slot.cropType]; 
+            const adjustedGrowTime = getAdjustedGrowTime(slot);
+            const rotLimit = adjustedGrowTime + (def.rotTime * ROT_MULTI[slot.seedData.quality]);
+            if (slot.progress >= rotLimit) return 5; 
+            if (slot.progress >= adjustedGrowTime) return 4; 
+            if (slot.progress >= adjustedGrowTime * 0.5) return 3; 
+            if (slot.progress > 0) return 2; 
+            return 1; 
+        }
+
+        function showCustomNotification(title, message) {
+            document.getElementById('game-alert-title').innerText = title;
+            document.getElementById('game-alert-msg').innerHTML = message;
+            document.getElementById('game-alert').style.display = 'flex';
+        }
+
+        window.updateTeoSpeechText = function() {
+            const bubble = document.getElementById('teo-speech');
+            if (!bubble) return;
+            if (!state.unlocked.firstDiscountUsed) {
+                bubble.innerText = '"Nya! Welcome to my shop! I have a special discount on your first bag of Green Onion seeds!"';
+            } else {
+                bubble.innerText = '"Nya! Plant seeds, harvest crops! Sell crops for coins or extract them into seeds to breed stronger generations, nya!"';
+            }
+        };
+
+        window.switchTab = function(tab) {
+            activeTab = tab; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const btnTarget = document.querySelector(`button[onclick="switchTab('${tab}')"]`);
+            if(btnTarget) btnTarget.classList.add('active');
+            
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${tab}`).classList.add('active');
+
+            if(tab === 'farm') renderFarm();
+            if(tab === 'quiz') renderQuizSelector(); 
+            if(tab === 'shop') { renderShop(); renderStorage(); window.updateTeoSpeechText(); }
+            if(tab === 'rabbit') renderRabbitManagement();
+        };
+
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
+        window.closeGameAlert = function() { document.getElementById('game-alert').style.display = 'none'; };
+        
+        window.openPlotManager = function(plotIndex) {
+            if (plotIndex >= state.maxPlots) return;
+            mgrPlotIndex = plotIndex;
+            mgrTool = 'plant';
+            stagedActions = new Array(9).fill(null);
+            document.getElementById('plot-mgr-title').innerText = `Managing Plot ${plotIndex + 1}`;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tool-btn-plant').classList.add('active');
+            renderPlotManagerGrid();
+            document.getElementById('modal-plot-manager').style.display = 'flex';
+        };
+
+        window.setPlotTool = function(tool) {
+            mgrTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tool-btn-${tool}`).classList.add('active');
+        };
+
+        window.handleMgrSlotClick = function(slotIndex) {
+            const actualSlot = state.plots[mgrPlotIndex].slots[slotIndex];
+            const stage = getSlotStage(actualSlot);
+
+            if (stagedActions[slotIndex]) { stagedActions[slotIndex] = null; renderPlotManagerGrid(); return; }
+
+            if (mgrTool === 'plant') {
+                if (stage === 0 || stage === 5) { 
+                    stagingTargetSlot = slotIndex;
+                    openPlantTypeSelectModal();
+                }
+            } else if (mgrTool === 'water') {
+                if (!actualSlot.isWatered && stage > 0 && stage < 4) {
+                    stagedActions[slotIndex] = { action: 'water' }; renderPlotManagerGrid();
+                }
+            } else if (mgrTool === 'harvest') {
+                if (stage === 4 || stage === 5) {
+                    stagedActions[slotIndex] = { action: stage === 4 ? 'harvest' : 'clear' }; renderPlotManagerGrid();
+                }
+            }
+        };
+
+        function renderPlotManagerGrid() {
+            const grid = document.getElementById('plot-mgr-grid');
+            grid.innerHTML = '';
+            const plot = state.plots[mgrPlotIndex];
+            
+            plot.slots.forEach((slot, i) => {
+                const stage = getSlotStage(slot);
+                let html = `<div class="mgr-slot" onclick="handleMgrSlotClick(${i})">`;
+                
+                if (stage === 0) html += `<div style="font-size: 1.5rem; color:#8d6e63;">🕳️</div>`;
+                else {
+                    const def = CROP_TYPES[slot.cropType]; let emoji = def.emoji;
+                    if (stage === 1) emoji = "📦"; else if (stage === 2) emoji = "🌱"; else if (stage === 3) emoji = "🌿"; else if (stage === 5) emoji = "🥀";
+                    html += `<div style="font-size: 2rem;">${emoji}</div>`;
+                }
+
+                if (stagedActions[i]) {
+                    let icon = '';
+                    if (stagedActions[i].action === 'plant') icon = '🌱';
+                    if (stagedActions[i].action === 'water') icon = '💧';
+                    if (stagedActions[i].action === 'harvest') icon = '🌾';
+                    if (stagedActions[i].action === 'clear') icon = '🧹';
+                    html += `<div class="staged-overlay">${icon}</div>`;
+                }
+                html += `</div>`;
+                grid.innerHTML += html;
+            });
+        }
+
+        window.openPlantTypeSelectModal = function() {
+            const typeList = document.getElementById('plant-type-list');
+            typeList.innerHTML = '';
+            
+            Object.keys(state.inventory).forEach(typeKey => {
+                const count = state.inventory[typeKey].length;
+                if (count > 0) {
+                    const def = CROP_TYPES[typeKey];
+                    const row = document.createElement('button');
+                    row.className = 'w-full text-left p-3 rounded-lg border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 font-semibold flex justify-between items-center transition';
+                    row.innerHTML = `<span>${def.emoji} ${def.name}</span><span class="text-sm text-slate-500">${count} seeds available</span>`;
+                    row.onclick = () => selectSeedTypeCategory(typeKey);
+                    typeList.appendChild(row);
+                }
+            });
+
+            if (typeList.innerHTML === '') {
+                typeList.innerHTML = `<p style="text-align:center; padding: 15px; color: var(--text-muted);">No seed inventory available. Purchase packs first from the shop!</p>`;
+            }
+
+            document.getElementById('modal-plant-type-select').style.display = 'flex';
+        };
+
+        // Persistent selection logic (Selections maintained across modal closing parameters)
+        function selectSeedTypeCategory(typeKey) {
+            // Keep existing selections if it is the same seed type, otherwise initialize empty
+            if (currentSeedingTypeKey !== typeKey) {
+                currentSeedingTypeKey = typeKey;
+                temporarySelectedSeedIndices = [];
+            }
+            closeModal('modal-plant-type-select');
+            openSpecificSeedSelectionModal();
+        }
+
+        function openSpecificSeedSelectionModal() {
+            const list = document.getElementById('plant-seed-list');
+            list.innerHTML = '';
+            
+            let emptySlotsCount = 0;
+            state.plots[mgrPlotIndex].slots.forEach(s => {
+                const stage = getSlotStage(s);
+                if (stage === 0 || stage === 5) emptySlotsCount++;
+            });
+
+            document.getElementById('staged-limit-counter').innerText = `Select up to ${emptySlotsCount} seeds (Plots available: ${emptySlotsCount})`;
+
+            const seeds = state.inventory[currentSeedingTypeKey];
+            const def = CROP_TYPES[currentSeedingTypeKey];
+
+            // Cleanup indices that are now out of bounds (in case inventory size changed)
+            temporarySelectedSeedIndices = temporarySelectedSeedIndices.filter(idx => idx < seeds.length);
+
+            seeds.forEach((seed, idx) => {
+                const card = document.createElement('div');
+                card.id = `staged-seed-idx-${idx}`;
+                
+                // Determine persistent highlighted selection state
+                const isSelected = temporarySelectedSeedIndices.includes(idx);
+                card.className = isSelected ? 'staged-seed-box selected' : 'staged-seed-box';
+                card.onclick = () => toggleSelectSeedStaging(idx, emptySlotsCount);
+
+                let sHtml = state.buffs.seeSize.active ? getGradeBadge(seed.size) : `<span class="grade-badge grade-hidden">?</span>`;
+                let qHtml = state.buffs.seeQuality.active ? getGradeBadge(seed.quality) : `<span class="grade-badge grade-hidden">?</span>`;
+                let mHtml = state.buffs.seeMagic.active ? getGradeBadge(seed.spell) : `<span class="grade-badge grade-hidden">?</span>`;
+
+                card.innerHTML = `
+                    <div>
+                        <strong>${seed.name || (def.name + ' Seed')}</strong><br>
+                        <span class="text-xs text-slate-500">Size: ${sHtml} | Quality: ${qHtml} | Magic: ${mHtml}</span>
+                    </div>
+                    <div class="select-indicator font-bold ${isSelected ? 'text-amber-500' : 'text-slate-400'}">${isSelected ? '✓' : '◯'}</div>
+                `;
+                list.appendChild(card);
+            });
+
+            document.getElementById('modal-plant-select').style.display = 'flex';
+        }
+
+        function toggleSelectSeedStaging(index, limit) {
+            const pos = temporarySelectedSeedIndices.indexOf(index);
+            const el = document.getElementById(`staged-seed-idx-${index}`);
+            if (pos > -1) {
+                temporarySelectedSeedIndices.splice(pos, 1);
+                el.classList.remove('selected');
+                el.querySelector('.select-indicator').innerText = '◯';
+                el.querySelector('.select-indicator').className = 'select-indicator font-bold text-slate-400';
+            } else {
+                if (temporarySelectedSeedIndices.length >= limit) {
+                    showCustomNotification("Selection Limit", `Your plot only has ${limit} empty coordinates available!`);
+                    return;
+                }
+                temporarySelectedSeedIndices.push(index);
+                el.classList.add('selected');
+                el.querySelector('.select-indicator').innerText = '✓';
+                el.querySelector('.select-indicator').className = 'select-indicator font-bold text-amber-500';
+            }
+        }
+
+        window.confirmStagedSeedsSelection = function() {
+            if (temporarySelectedSeedIndices.length === 0) {
+                showCustomNotification("Seeding Issue", "Please select at least 1 coordinate pack to stage!");
+                return;
+            }
+            
+            let emptyCounter = 0;
+            state.plots[mgrPlotIndex].slots.forEach((s, idx) => {
+                const stage = getSlotStage(s);
+                if ((stage === 0 || stage === 5) && emptyCounter < temporarySelectedSeedIndices.length) {
+                    const originalSeedIndexInInventory = temporarySelectedSeedIndices[emptyCounter];
+                    stagedActions[idx] = { 
+                        action: 'plant', 
+                        typeKey: currentSeedingTypeKey,
+                        invIdx: originalSeedIndexInInventory
+                    };
+                    emptyCounter++;
+                }
+            });
+
+            closeModal('modal-plant-select');
+            renderPlotManagerGrid();
+        };
+
+        window.executePlotActions = function() {
+            const hasActions = stagedActions.some(a => a !== null);
+            if (!hasActions) { closeModal('modal-plot-manager'); return; }
+            if (state.ap < 1) { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to execute farm work!"); return; }
+
+            state.ap -= 1;
+            const plot = state.plots[mgrPlotIndex];
+
+            let plantingIndicesToRemove = [];
+            stagedActions.forEach((staged) => {
+                if (staged && staged.action === 'plant') {
+                    plantingIndicesToRemove.push({ typeKey: staged.typeKey, index: staged.invIdx });
+                }
+            });
+
+            let groupedRemovals = {};
+            plantingIndicesToRemove.forEach(item => {
+                if(!groupedRemovals[item.typeKey]) groupedRemovals[item.typeKey] = [];
+                groupedRemovals[item.typeKey].push(item.index);
+            });
+
+            stagedActions.forEach((staged, i) => {
+                if (!staged) return;
+                const slot = plot.slots[i];
+                if (staged.action === 'plant') {
+                    const seedData = state.inventory[staged.typeKey][staged.invIdx];
+                    plot.slots[i] = { cropType: staged.typeKey, progress: 0, isWatered: false, seedData: seedData };
+                } else if (staged.action === 'water') {
+                    slot.isWatered = true;
+                } else if (staged.action === 'harvest') {
+                    let parentGen = slot.seedData ? (slot.seedData.gen || 0) : 0;
+                    state.crops[slot.cropType].push({
+                        size: slot.seedData ? slot.seedData.size : 3,
+                        quality: slot.seedData ? slot.seedData.quality : 3,
+                        spell: slot.seedData ? slot.seedData.spell : 3,
+                        gen: parentGen + 1,
+                        parentPlot: mgrPlotIndex + 1,
+                        parentSlot: i + 1
+                    });
+                    plot.slots[i] = { cropType: null, progress: 0, isWatered: false, seedData: null };
+                } else if (staged.action === 'clear') {
+                    plot.slots[i] = { cropType: null, progress: 0, isWatered: false, seedData: null };
+                }
+            });
+
+            // Splice matched seed bags from state inventories starting from highest indices
+            Object.keys(groupedRemovals).forEach(typeKey => {
+                const indices = groupedRemovals[typeKey].sort((a,b) => b - a);
+                indices.forEach(idx => {
+                    state.inventory[typeKey].splice(idx, 1);
+                });
+            });
+
+            // Wipes temporary selection array upon successful action execution
+            temporarySelectedSeedIndices = [];
+
+            closeModal('modal-plot-manager');
+            triggerSaveGame(); renderFarm(); renderStorage();
+        };
+
+        window.huntPiranhas = function() {
+            if (state.ap < 1) { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to hunt!"); return; }
+            if (state.pondPiranhas < 1) { showCustomNotification("Pond Stock Empty", "The pond is currently empty! Wait for more piranhas to spawn."); return; }
+            state.ap -= 1;
+            const catchAmount = state.pondPiranhas; 
+            state.pondPiranhas = 0;
+            state.piranhas += catchAmount;
+            showCustomNotification(`Hunt Successful`, `You spent 1 ⚡ and retrieved ${catchAmount} Piranhas!`);
+            triggerSaveGame(); renderFarm();
+        };
+
+        window.collectHoney = function() {
+            if (state.ap < 1) { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to collect honey!"); return; }
+            if (state.uncollectedHoney < 1) { showCustomNotification("Apiary", "No honey is ready to be collected right now."); return; }
+            state.ap -= 1;
+            const amount = state.uncollectedHoney;
+            state.uncollectedHoney = 0;
+            state.honey += amount;
+            showCustomNotification(`Honey Harvested`, `Spent 1 ⚡ and collected ${amount} Honey Jars! Stored safely in Farm Storage.`);
+            triggerSaveGame(); renderFarm(); renderStorage();
+        };
+
+        window.openCookingModal = function() {
+            potIngredients = [];
+            renderCookingModal();
+            document.getElementById('modal-cooking').style.display = 'flex';
+        };
+
+        function renderCookingModal() {
+            document.getElementById('cook-pot-count').innerText = potIngredients.length;
+            document.getElementById('cook-pot-max').innerText = state.potSize;
+
+            const potTarget = document.getElementById('cook-pot-slots'); potTarget.innerHTML = '';
+            for(let i=0; i<state.potSize; i++) {
+                if (i < potIngredients.length) {
+                    let emoji = "❓";
+                    if(potIngredients[i] === 'piranha') emoji = "🐟"; else if(potIngredients[i] === 'honey') emoji = "🍯"; else emoji = CROP_TYPES[potIngredients[i].type].emoji;
+                    potTarget.innerHTML += `<div class="pot-slot filled" onclick="removeIngredient(${i})">${emoji}</div>`;
+                } else {
+                    potTarget.innerHTML += `<div class="pot-slot"></div>`;
+                }
+            }
+
+            const prediction = checkRecipePrediction();
+            document.getElementById('cook-recipe-prediction').innerText = prediction ? `Recipe: ${prediction.name} (${prediction.time}m)` : `Recipe: ???`;
+
+            const invTarget = document.getElementById('cook-inventory-list'); invTarget.innerHTML = '';
+            
+            Object.keys(state.crops).forEach(type => {
+                let available = state.crops[type].length;
+                potIngredients.forEach(ing => { if(ing.type === type) available--; });
+                if (available > 0) {
+                    const btn = document.createElement('button'); btn.className = 'tool-btn active';
+                    btn.innerHTML = `${CROP_TYPES[type].emoji} Add ${CROP_TYPES[type].name}`;
+                    btn.onclick = () => addIngredient(type, 'crop');
+                    invTarget.appendChild(btn);
+                }
+            });
+
+            let availP = state.piranhas; potIngredients.forEach(ing => { if(ing === 'piranha') availP--; });
+            if (availP > 0) {
+                const btn = document.createElement('button'); btn.className = 'tool-btn active'; btn.style.background='#3b82f6';
+                btn.innerHTML = `🐟 Add Piranha`; btn.onclick = () => addIngredient('piranha', 'misc');
+                invTarget.appendChild(btn);
+            }
+
+            let availH = state.honey; potIngredients.forEach(ing => { if(ing === 'honey') availH--; });
+            if (availH > 0) {
+                const btn = document.createElement('button'); btn.className = 'tool-btn active'; btn.style.background='#fbbf24'; btn.style.color='#0f172a';
+                btn.innerHTML = `🍯 Add Honey`; btn.onclick = () => addIngredient('honey', 'misc');
+                invTarget.appendChild(btn);
+            }
+        }
+
+        window.addIngredient = function(typeKey, category) {
+            if (potIngredients.length >= state.potSize) return;
+            if (category === 'crop') {
+                const usedIndices = new Set();
+                potIngredients.forEach(ing => { if(ing.type === typeKey) usedIndices.add(ing.idx); });
+                for(let i=0; i<state.crops[typeKey].length; i++) {
+                    if (!usedIndices.has(i)) {
+                        potIngredients.push({ type: typeKey, idx: i, data: state.crops[typeKey][i] });
+                        break;
+                    }
+                }
+            } else {
+                potIngredients.push(typeKey);
+            }
+            renderCookingModal();
+        };
+
+        window.removeIngredient = function(index) {
+            potIngredients.splice(index, 1);
+            renderCookingModal();
+        };
+
+        function checkRecipePrediction() {
+            let counts = { greenOnion: 0, tomato: 0, potato: 0, piranha: 0, honey: 0 };
+            potIngredients.forEach(ing => {
+                if(ing === 'piranha') counts.piranha++;
+                else if(ing === 'honey') counts.honey++;
+                else counts[ing.type]++;
+            });
+
+            if (state.unlocked.recipes && counts.greenOnion>=1 && counts.tomato>=1 && counts.potato>=1 && counts.piranha>=1 && counts.honey>=1) {
+                return { id: 'mystic_stew', name: 'Mystic Farm Stew (Mega All-Buff)', time: 15 };
+            } else if (counts.potato >= 3) {
+                return { id: 'roasted_potato', name: 'Roasted Potato (3x Crop Speed & Quality Vision)', time: 10 };
+            } else if (counts.tomato >= 3) {
+                return { id: 'roasted_cherry', name: 'Roasted Tomato (Reveal Seed Size)', time: 5 };
+            } else if (counts.piranha >= 3) {
+                return { id: 'roasted_piranha', name: 'Roasted Piranha (Reveal Seed Magic)', time: 5 };
+            } else if (counts.greenOnion >= 3) {
+                return { id: 'roasted_onion', name: 'Roasted Onion (3x Quiz Coin Multi)', time: 3 };
+            }
+            return null;
+        }
+
+        window.startCooking = function() {
+            if (state.ap < 1) { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to start cooking!"); return; }
+            if (state.cooking.active) { showCustomNotification("Campfire Busy", "A dish is already cooking in the campfire!"); return; }
+            const recipe = checkRecipePrediction();
+            if (!recipe) { showCustomNotification("Invalid Recipe", "Those ingredients do not match any available recipe blueprints."); return; }
+
+            state.ap -= 1;
+            let magicSum = 0; let magicCount = 0;
+            let cropsToRemove = { greenOnion: [], tomato: [], potato: [] };
+
+            potIngredients.forEach(ing => {
+                if(ing === 'piranha') { state.piranhas--; }
+                else if(ing === 'honey') { state.honey--; }
+                else {
+                    cropsToRemove[ing.type].push(ing.idx);
+                    magicSum += ing.data.spell; magicCount++;
+                }
+            });
+
+            Object.keys(cropsToRemove).forEach(type => {
+                cropsToRemove[type].sort((a,b)=>b-a).forEach(idx => {
+                    state.crops[type].splice(idx, 1);
+                });
+            });
+
+            const magicAvg = magicCount > 0 ? Math.round(magicSum / magicCount) : 3;
+            state.cooking = {
+                active: true,
+                endTime: Date.now() + (recipe.time * 60000),
+                recipe: recipe.id,
+                name: recipe.name,
+                magicAvg: magicAvg
+            };
+
+            closeModal('modal-cooking');
+            showCustomNotification("Cooking Commenced", `The fire is ignited! Your ${recipe.name} will be ready in ${recipe.time} minutes.`);
+            triggerSaveGame(); renderFarm(); renderStorage();
+        };
+
+        function applyCookingBuff(recipeId, magicAvg) {
+            const durationMin = magicAvg * 2; 
+            const durationMs = durationMin * 60000;
+            const now = Date.now();
+
+            if (recipeId === 'roasted_onion') { state.buffs.coinMulti = { active: true, expiry: now + durationMs }; }
+            if (recipeId === 'roasted_cherry') { state.buffs.seeSize = { active: true, expiry: now + durationMs }; }
+            if (recipeId === 'roasted_potato') { state.buffs.seeQuality = { active: true, expiry: now + durationMs }; }
+            if (recipeId === 'roasted_piranha') { state.buffs.seeMagic = { active: true, expiry: now + durationMs }; }
+            if (recipeId === 'mystic_stew') {
+                const megaMs = 10 * 60000;
+                state.buffs.coinMulti = { active: true, expiry: now + megaMs };
+                state.buffs.seeSize = { active: true, expiry: now + megaMs };
+                state.buffs.seeQuality = { active: true, expiry: now + megaMs };
+                state.buffs.seeMagic = { active: true, expiry: now + megaMs };
+            }
+            triggerSaveGame();
+        }
+
+        window.openCropManager = function(typeKey) {
+            const list = document.getElementById('mgr-crop-list');
+            document.getElementById('mgr-crop-name').innerText = CROP_TYPES[typeKey].name;
+            list.innerHTML = '';
+            
+            if (state.crops[typeKey].length === 0) {
+                list.innerHTML = `<p style="text-align:center; padding: 20px; color: var(--text-muted);">No crops of this type in storage.</p>`;
+            } else {
+                state.crops[typeKey].forEach((crop, idx) => {
+                    const def = CROP_TYPES[typeKey];
+                    const sellPrice = def.basePrice * GRADE_MULTI[crop.size];
+                    
+                    const div = document.createElement('div');
+                    div.className = 'seed-selection-row';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${def.emoji} Harvested Crop (F${crop.gen || 1})</strong><br>
+                            <span style="font-size:0.85rem; color:var(--warning); font-weight:bold;">Market Offer: ${sellPrice} 💰</span>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button style="background:#eab308; color:#0f172a;" onclick="sellCrop('${typeKey}', ${idx})">Sell</button>
+                            <button onclick="extractCrop('${typeKey}', ${idx})">Extract 6 Seeds</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+            document.getElementById('modal-crop-manager').style.display = 'flex';
+        };
+
+        window.sellCrop = function(typeKey, idx) {
+            const crop = state.crops[typeKey].splice(idx, 1)[0];
+            const val = CROP_TYPES[typeKey].basePrice * GRADE_MULTI[crop.size];
+            state.coins += val;
+            triggerSaveGame(); window.openCropManager(typeKey); renderStorage(); updateHeader();
+        };
+
+        // Genetic extraction: Generates 6 offspring seeds independently with Standard Normal variance centered on parent stats
+        window.extractCrop = function(typeKey, idx) {
+            const crop = state.crops[typeKey].splice(idx, 1)[0];
+            let newSeeds = [];
+            const cropGen = crop.gen || 1;
+            const pPlot = crop.parentPlot || 1;
+            const pSlot = crop.parentSlot || 1;
+            
+            for(let i=1; i<=6; i++) {
+                const offspringSize = generateNormalStat(crop.size);
+                const offspringQuality = generateNormalStat(crop.quality);
+                const offspringSpell = generateNormalStat(crop.spell);
+                const seedName = `${CROP_TYPES[typeKey].name} Seed F${cropGen}P${pPlot}L${pSlot}S${i}`;
+                
+                newSeeds.push({
+                    type: typeKey,
+                    size: offspringSize,
+                    quality: offspringQuality,
+                    spell: offspringSpell,
+                    gen: cropGen,
+                    name: seedName
+                });
+            }
+            state.inventory[typeKey].push(...newSeeds);
+            triggerSaveGame(); window.openCropManager(typeKey); renderStorage();
+        };
+
+        window.buySeeds = function(typeKey, cost, isDiscount=false) {
+            if(state.coins >= cost) {
+                state.coins -= cost; state.inventory[typeKey].push(...createShopSeedBag(typeKey, 9)); 
+                if(isDiscount) state.unlocked.firstDiscountUsed = true;
+                triggerSaveGame(); renderShop(); renderStorage(); window.updateTeoSpeechText();
+            }
+        };
+
+        window.buyLand = function(cost) {
+            if(state.coins >= cost && state.maxPlots < 6) {
+                state.coins -= cost; state.maxPlots++;
+                triggerSaveGame(); renderShop(); renderFarm();
+                showCustomNotification("Farmland Expanded", `Teo: "Excellent choice, nya! Plot ${state.maxPlots} unlocked!"`);
+            }
+        };
+
+        window.buyPotUpgrade = function(cost) {
+            if(state.coins >= cost && !state.unlocked.potUpgrade) {
+                state.coins -= cost; state.unlocked.potUpgrade = true; state.potSize = 15;
+                triggerSaveGame(); renderShop();
+                showCustomNotification("Merchant Stock Unlocked", `Teo: "Our campfire pot upgrade complete! Can now hold 15 ingredients, nya!"`);
+            }
+        };
+
+        window.buyRecipes = function(cost) {
+            if(state.coins >= cost && !state.unlocked.recipes) {
+                state.coins -= cost; state.unlocked.recipes = true;
+                triggerSaveGame(); renderShop();
+                showCustomNotification("Recipe Acquired", `Teo: "You acquired the Secret Blueprint! Mix Crops, Piranhas, and Honey Jars together, nya!"`);
+            }
+        };
+
+        window.setRabbitPlot = function(rabbitIndex, plotVal) {
+            if (rabbitIndex < 2 && state.ap < 1 && plotVal !== '-1') { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to reassign a standard helper rabbit!"); return; }
+            if (rabbitIndex < 2 && plotVal !== '-1') state.ap -= 1;
+            
+            if (plotVal === 'pond') {
+                state.rabbits[rabbitIndex].assignedPlot = 'pond';
+            } else {
+                state.rabbits[rabbitIndex].assignedPlot = parseInt(plotVal);
+            }
+            triggerSaveGame(); renderRabbitManagement(); updateHeader();
+        };
+
+        window.setRabbitTask = function(rabbitIndex, taskVal) {
+            if (rabbitIndex < 2 && state.ap < 1 && taskVal !== '') { showCustomNotification("AP Warning", "You need 1 ⚡ Action Point to assign a new task!"); return; }
+            if (rabbitIndex < 2 && taskVal !== '') state.ap -= 1;
+            state.rabbits[rabbitIndex].task = taskVal;
+            triggerSaveGame(); renderRabbitManagement(); updateHeader();
+        };
+
+        window.launchQuizWorkspace = function(yearStr) {
+            state.currentQuizYear = yearStr;
+            document.getElementById('quiz-workspace-title').innerText = `${yearStr} Tower Archive Verification`;
+            document.getElementById('pdf-frame').src = QUIZ_DATA[yearStr].pdfUrl;
+            buildInteractiveOMR(); currentWorkspaceMode = 'pdf'; syncOptionBWorkspaceUI();
+            document.getElementById('fullscreen-quiz-container').style.display = 'flex';
+        };
+
+        window.exitQuizWorkspace = function() {
+            document.getElementById('fullscreen-quiz-container').style.display = 'none';
+            document.getElementById('pdf-frame').src = ""; state.currentQuizYear = null; renderQuizSelector(); 
+        };
+
+        window.toggleOptionBWorkspaceMode = function() {
+            currentWorkspaceMode = (currentWorkspaceMode === 'pdf') ? 'omr' : 'pdf'; syncOptionBWorkspaceUI();
+        };
+
+        window.submitQuiz = function() {
+            const yearStr = state.currentQuizYear; const dataset = QUIZ_DATA[yearStr];
+            let rawPoints = 0; let omissionsDetected = false; let playerAnswers = [];
+            
+            if (state.ap < 1) {
+                showCustomNotification("Not Enough Action Points", "You need 1 ⚡ AP to submit an evaluation! Wait for your AP to recover.");
+                return;
+            }
+
+            for (let idx = 0; idx < 20; idx++) {
+                const qNum = 21 + idx; const checkedElem = document.querySelector(`input[name="omr_q_${qNum}"]:checked`);
+                if (checkedElem) { playerAnswers.push(checkedElem.value); if (checkedElem.value === dataset.answers[idx]) rawPoints++; } 
+                else { playerAnswers.push(null); omissionsDetected = true; }
+            }
+            
+            if (omissionsDetected && !confirm("Omissions detected. Submit anyway?")) return;
+            
+            state.ap -= 1;
+
+            let coinsEarned = rawPoints;
+            if (state.buffs.coinMulti.active) coinsEarned *= 3;
+            
+            state.coins += coinsEarned; state.completedSets += 1;
+            state.quizzes[yearStr] = { lastAttempt: Date.now(), answers: playerAnswers, score: rawPoints };
+            
+            triggerSaveGame(); renderTabs(); buildInteractiveOMR();
+
+            if (state.completedSets === 6) state.unlocked.fire = true;
+            if (state.completedSets === 7) state.unlocked.pond = true;
+            if (state.completedSets === 8) state.unlocked.warriorRabbit = true;
+
+            let baseMsg = `<div style="font-size: 1.1rem; color: #1e293b;"><strong>Evaluation successfully logged!</strong><br>Score: <span style="color:var(--tower-blue); font-weight:bold;">${rawPoints}/20</span>.<br>You earned <span style="color:#b45309; font-weight:bold;">+${coinsEarned}</span> Tower Coins!</div>`;
+            let teoMsg = "";
+
+            if (state.completedSets === 1) teoMsg = `1 Set Completed! <strong>Teo's Shop & Storage</strong> is now open on the tabs! Purchase seeds with your new coins, nya!`;
+            else if (state.completedSets === 2) teoMsg = `2 Sets Completed! <strong>Rabbit Helpers</strong> are unlocked! Assign a rabbit to automate watering and harvesting, nya!`;
+            else if (state.completedSets === 3) teoMsg = `3 Sets Completed! I am now selling <strong>Land Deeds</strong> in my shop. Expand your farm, nya!`;
+            else if (state.completedSets === 4) teoMsg = `4 Sets Completed! A <strong>second Rabbit Helper</strong> has joined your farm to help you automate, nya!`;
+            else if (state.completedSets === 5) teoMsg = `5 Sets Completed! A <strong>Queen Bee Apiary</strong> has appeared on your farm! Harvest Honey every 10 minutes, nya!`;
+            else if (state.completedSets === 6) teoMsg = `6 Sets Completed! The <strong>Campfire</strong> is unlocked on My Farm! Mix crops to cook powerful buffs, nya!`;
+            else if (state.completedSets === 7) teoMsg = `7 Sets Completed! A wild <strong>Piranha Pond</strong> surfaced next to your farm! Hunt them to cook seed-magic vision buffs!`;
+            else if (state.completedSets === 8) teoMsg = `8 Sets Completed! <strong>Warrior Rabbit</strong> companion unlocked! Assign them to pond coordinates to hunt piranhas for free!`;
+            else if (state.completedSets === 9) teoMsg = `9 Sets Completed! A <strong>Pot Size expansion</strong> upgrade is now stocked in my Shop, nya!`;
+            else if (state.completedSets === 10) teoMsg = `10 Sets Completed! Dual-hybrid <strong>Synergy blueprints</strong> are now stocked in my Shop, nya!`;
+
+            if (teoMsg) {
+                let combinedMsg = `${baseMsg}<br><br>
+                <div style="display:flex; align-items:center; gap:12px; text-align:left; background:#fffbeb; border:2px solid #fcd34d; padding:15px; border-radius:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="font-size:3.5rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); line-height: 1;">🐱</div>
+                    <div style="color:#78350f; font-size:1rem; line-height:1.4;"><strong>Teo:</strong><br>"Nya! ${teoMsg}"</div>
+                </div>`;
+                showCustomNotification("Archive Evaluation Complete", combinedMsg);
+            } else {
+                showCustomNotification("Archive Evaluation Complete", baseMsg);
+            }
+        };
+
+        // Keyboard arrow navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('fullscreen-quiz-container').style.display === 'flex') {
+                if(e.key === 'ArrowRight' && currentWorkspaceMode === 'pdf') window.toggleOptionBWorkspaceMode();
+                if(e.key === 'ArrowLeft' && currentWorkspaceMode === 'omr') window.toggleOptionBWorkspaceMode();
+            }
+        });
+
+        function updateHeader() { 
+            document.getElementById('stat-coins').innerHTML = `<span class="coin-icon">💰</span>${state.coins} Coins`;
+            document.getElementById('stat-ap').innerHTML = `<span class="ap-icon">⚡</span>${state.ap} AP`;
+            
+            const buffTarget = document.getElementById('buff-bar-container');
+            buffTarget.innerHTML = '';
+            const now = Date.now();
+            if (state.buffs.coinMulti.active) buffTarget.innerHTML += `<span class="buff-badge">3xCoin ${formatTimeRemaining((state.buffs.coinMulti.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeSize.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Size ${formatTimeRemaining((state.buffs.seeSize.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeQuality.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Quality ${formatTimeRemaining((state.buffs.seeQuality.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeMagic.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Magic ${formatTimeRemaining((state.buffs.seeMagic.expiry-now)/1000)}</span>`;
+        }
+
+        function renderTabs() {
+            if(state.completedSets >= 1) state.unlocked.shop = true;
+            if(state.completedSets >= 2) state.unlocked.rabbit = true;
+            if(state.completedSets >= 3) state.unlocked.land = true;
+
+            if(state.unlocked.shop) document.getElementById('tab-shop').style.display = 'block';
+            if(state.unlocked.rabbit) document.getElementById('tab-rabbit').style.display = 'block';
+        }
+
+        function updateTeoBannerAdvisor() {
+            const banner = document.getElementById('teo-banner-advisor');
+            const text = document.getElementById('teo-banner-text');
+            banner.style.display = "flex";
+            if (state.completedSets === 0) text.innerHTML = `<strong>Teo:</strong> "Head to the Tower Quizzes tab and solve a historical archive. Every complete evaluation rewards coins!"`;
+            else if (state.completedSets >= 1 && state.plots[0].slots.every(s=>!s.cropType)) text.innerHTML = `<strong>Teo:</strong> "Wonderful, nya! Now that you have coins, purchase seeds from my Shop!"`;
+            else text.innerHTML = `<strong>Teo:</strong> "Click any plot to open the Plot Manager. Group operations cost only 1 AP per plot, nya!"`;
+        }
+
+        function renderFarm() {
+            const container = document.getElementById('farm-plots-target');
+            container.innerHTML = '';
+
+            state.plots.forEach((plot, plotIndex) => {
+                const plotCard = document.createElement('div');
+                const isPlotLocked = plotIndex >= state.maxPlots;
+                plotCard.className = isPlotLocked ? 'plot-card locked' : 'plot-card';
+                if(!isPlotLocked) plotCard.onclick = () => window.openPlotManager(plotIndex);
+                
+                let plotHeaderHtml = `<div class="plot-card-header"><strong>Plot ${plotIndex + 1}</strong>${isPlotLocked ? `<span style="font-size:0.8rem; color:#475569;">🔒 Locked</span>` : ''}</div>`;
+                let soilGridHtml = `<div class="soil-grid">`;
+                
+                plot.slots.forEach((slot, slotIndex) => {
+                    if (isPlotLocked) {
+                        soilGridHtml += `<div class="soil-slot" style="cursor: not-allowed; border-color:#cbd5e1;"><div style="font-size:1.4rem; color:#94a3b8;">🌾</div></div>`;
+                    } else {
+                        const stage = getSlotStage(slot);
+                        let slotClass = "soil-slot"; let innerContent = "";
+
+                        if (stage === 0) {
+                            innerContent = `<div style="font-size: 1.3rem; color:#8d6e63;">🕳️</div>`;
+                        } else {
+                            slotClass += " planted";
+                            const def = CROP_TYPES[slot.cropType]; let emoji = def.emoji;
+                            if (stage === 1) emoji = "📦"; else if (stage === 2) emoji = "🌱"; else if (stage === 3) emoji = "🌿"; else if (stage === 5) { emoji = "🥀"; slotClass += " rotten"; }
+                            if (!slot.isWatered && stage < 4) slotClass += " needs-water";
+                            if (stage === 4) slotClass += " harvest-ready";
+
+                            let timerHtml = "";
+                            const adjustedGrowTime = getAdjustedGrowTime(slot);
+                            
+                            if (stage > 0 && stage < 4 && slot.isWatered) {
+                                timerHtml = `<div class="mini-timer">${formatTimeRemaining(adjustedGrowTime - slot.progress)}</div>`;
+                            } else if (!slot.isWatered && stage < 4) {
+                                timerHtml = `<div class="mini-timer text-blue-400">Dry</div>`;
+                            } else if (stage === 4) {
+                                const rotLimit = adjustedGrowTime + (def.rotTime * ROT_MULTI[slot.seedData.quality]);
+                                const rotSecondsLeft = Math.max(0, Math.floor(rotLimit - slot.progress));
+                                timerHtml = `<div class="mini-timer text-red-400 font-bold">Rot:${rotSecondsLeft}s</div>`;
+                            }
+                            innerContent = `<div class="mini-emoji">${emoji}</div>${timerHtml}`;
+                        }
+                        soilGridHtml += `<div class="${slotClass}">${innerContent}</div>`;
+                    }
+                });
+                soilGridHtml += `</div>`; plotCard.innerHTML = plotHeaderHtml + soilGridHtml; container.appendChild(plotCard);
+            });
+
+            if (state.unlocked.fire) {
+                document.getElementById('scenery-fire-target').style.display = 'flex';
+                if (state.cooking.active) {
+                    const rem = Math.max(0, state.cooking.endTime - Date.now());
+                    document.getElementById('cooking-status-text').innerText = `Cooking ${state.cooking.name}\n${formatTimeRemaining(rem/1000)}`;
+                    document.getElementById('btn-cook-action').style.display = 'none';
+                } else {
+                    document.getElementById('cooking-status-text').innerText = `Pot Ready (Size ${state.potSize})`;
+                    document.getElementById('btn-cook-action').style.display = 'block';
+                }
+            } else {
+                document.getElementById('scenery-fire-target').style.display = 'none';
+            }
+
+            if (state.unlocked.pond) {
+                document.getElementById('scenery-pond-target').style.display = 'flex';
+                document.getElementById('pond-piranha-text').innerText = `Fish in Pond: ${state.pondPiranhas}`;
+            } else {
+                document.getElementById('scenery-pond-target').style.display = 'none';
+            }
+
+            if (state.completedSets >= 5) {
+                document.getElementById('scenery-hive-target').style.display = 'flex';
+                document.getElementById('hive-honey-text').innerText = `Uncollected: ${state.uncollectedHoney}`;
+            } else {
+                document.getElementById('scenery-hive-target').style.display = 'none';
+            }
+        }
+
+        function renderShop() {
+            const container = document.getElementById('shop-container'); container.innerHTML = '';
+            let goCost = 30; let goLabel = "Green Onion Seeds (x9)";
+            if (!state.unlocked.firstDiscountUsed) { goCost = 10; goLabel = "🌟 First Pack Discount: Onion (x9)"; }
+            const storeItems = [
+                { id: 'buy_go', key: 'greenOnion', name: goLabel, cost: goCost, action: () => window.buySeeds('greenOnion', goCost, true) },
+                { id: 'buy_tm', key: 'tomato', name: "Cherry Tomato Seeds (x9)", cost: 100, action: () => window.buySeeds('tomato', 100) },
+                { id: 'buy_pt', key: 'potato', name: "Blue Moon Potato Seeds (x9)", cost: 300, action: () => window.buySeeds('potato', 300) }
+            ];
+            if (state.unlocked.land && state.maxPlots < 6) {
+                const landCost = 50 * Math.pow(3, state.maxPlots - 1);
+                storeItems.push({ id: 'buy_land', key: 'land', name: `Buy Land deed (Plot ${state.maxPlots + 1})`, cost: landCost, action: () => window.buyLand(landCost) });
+            }
+            if (state.completedSets >= 9 && !state.unlocked.potUpgrade) {
+                storeItems.push({ id: 'buy_pot', key: 'pot', name: `Large Cooking Pot Upgrade`, cost: 800, action: () => window.buyPotUpgrade(800) });
+            }
+            if (state.completedSets >= 10 && !state.unlocked.recipes) {
+                storeItems.push({ id: 'buy_rec', key: 'recipe', name: `Secret Mystic Recipe`, cost: 1500, action: () => window.buyRecipes(1500) });
+            }
+
+            storeItems.forEach(item => {
+                const div = document.createElement('div'); div.className = 'shop-card';
+                div.innerHTML = `<h4>${item.name}</h4><div class="shop-card-cost">${item.cost} 💰</div><button id="btn-${item.id}" ${state.coins < item.cost ? 'disabled' : ''}>Purchase</button>`;
+                container.appendChild(div); document.getElementById(`btn-${item.id}`).onclick = item.action;
+            });
+        }
+
+        function renderStorage() {
+            // Seeds
+            const seedContainer = document.getElementById('inventory-container'); seedContainer.innerHTML = ''; let seedsPresent = false;
+            Object.keys(state.inventory).forEach(typeKey => {
+                const count = state.inventory[typeKey].length;
+                if(count > 0) {
+                    seedsPresent = true; const def = CROP_TYPES[typeKey]; const div = document.createElement('div'); div.className = 'inventory-card';
+                    div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">${def.emoji}</div><strong>${def.name} Seeds</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Seeds: ${count}</p>`;
+                    seedContainer.appendChild(div);
+                }
+            });
+            if(!seedsPresent) seedContainer.innerHTML = `<p style="color:var(--text-muted); padding:10px;">Stock list empty of coordinates seeds.</p>`;
+
+            // Ingredients
+            const cropContainer = document.getElementById('crop-container'); cropContainer.innerHTML = ''; 
+            
+            Object.keys(state.crops).forEach(typeKey => {
+                const count = state.crops[typeKey].length;
+                if(count > 0) {
+                    const def = CROP_TYPES[typeKey]; const div = document.createElement('div'); div.className = 'inventory-card';
+                    div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">${def.emoji}</div><strong>Harvested ${def.name}</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${count}</p><button onclick="openCropManager('${typeKey}')">Manage</button>`;
+                    cropContainer.appendChild(div);
+                }
+            });
+
+            if(state.honey > 0) {
+                const div = document.createElement('div'); div.className = 'inventory-card';
+                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🍯</div><strong>Honey Jars</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.honey}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.honey * 15; state.honey=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (15💰 each)</button>`;
+                cropContainer.appendChild(div);
+            }
+
+            if(state.piranhas > 0) {
+                const div = document.createElement('div'); div.className = 'inventory-card';
+                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🐟</div><strong>Piranhas</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.piranhas}</p>`;
+                cropContainer.appendChild(div);
+            }
+        }
+
+        function renderRabbitManagement() {
+            const container = document.getElementById('rabbit-management-container');
+            container.innerHTML = '';
+            
+            const allowedRabbits = state.completedSets >= 8 ? 3 : (state.completedSets >= 4 ? 2 : (state.completedSets >= 2 ? 1 : 0));
+            if (allowedRabbits === 0) { container.innerHTML = `<p style="text-align:center; color: var(--text-muted);">Complete at least 2 Quizzes to unlock a Rabbit Helper!</p>`; return; }
+
+            for (let i = 0; i < allowedRabbits; i++) {
+                const rabbit = state.rabbits[i];
+                const isWarrior = (i === 2);
+                let plotOptions = `<option value="-1">None (Resting)</option>`;
+                if (isWarrior) {
+                    plotOptions += `<option value="pond" ${rabbit.assignedPlot === 'pond' ? 'selected' : ''}>Piranha Pond</option>`;
+                } else {
+                    for(let p=0; p<state.maxPlots; p++) {
+                        plotOptions += `<option value="${p}" ${rabbit.assignedPlot === p ? 'selected' : ''}>Plot ${p+1}</option>`;
+                    }
+                }
+
+                container.innerHTML += `
+                    <div class="rabbit-card">
+                        <div class="rabbit-avatar">${isWarrior ? '🥷🐇' : '🐇'}</div>
+                        <div class="rabbit-controls">
+                            <h4 style="color:#0f172a; margin-bottom:5px;">${isWarrior ? 'Warrior Rabbit' : 'Rabbit Helper ' + (i+1)}</h4>
+                            <div class="rabbit-control-row">
+                                <label style="font-size: 0.9rem; font-weight: bold; width: 60px;">Target:</label>
+                                <select class="rabbit-select" onchange="setRabbitPlot(${i}, this.value)" style="flex:1;">${plotOptions}</select>
+                            </div>
+                            <div class="rabbit-control-row">
+                                <label style="font-size: 0.9rem; font-weight: bold; width: 60px;">Task:</label>
+                                <select class="rabbit-select" onchange="setRabbitTask(${i}, this.value)" style="flex:1;">
+                                    <option value="">Select Task</option>
+                                    ${isWarrior 
+                                        ? `<option value="hunt" ${rabbit.task === 'hunt' ? 'selected' : ''}>🐟 Automate Hunting</option>`
+                                        : `<option value="water" ${rabbit.task === 'water' ? 'selected' : ''}>💧 Water Dry Slots</option><option value="harvest" ${rabbit.task === 'harvest' ? 'selected' : ''}>🌾 Harvest Ready Crops (9-Ready Rule)</option>`
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderQuizSelector() {
+            const container = document.getElementById('quiz-year-selector'); container.innerHTML = '';
+            const allYears = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"];
+            allYears.forEach(year => {
+                const div = document.createElement('div'); div.className = `quiz-year-card`;
+                const lastAttempt = state.quizzes[year]?.lastAttempt || 0;
+                const onCooldown = (Date.now() - lastAttempt) < COOLDOWN_MS;
+                const badgeHtml = onCooldown ? `<span class="status-badge" style="background:rgba(210,153,34,0.15); color:var(--warning);">Cooldown Active</span>` : `<span class="status-badge available">Available</span>`;
+                div.innerHTML = `<div style="font-size:2rem;">📁</div><div>${year} Database</div>${badgeHtml}<div id="menu-timer-${year}" class="card-timer" style="display:none;"></div>`;
+                div.onclick = () => window.launchQuizWorkspace(year);
+                container.appendChild(div);
+            });
+            updateQuizMenuTimers();
+        }
+
+        function updateQuizMenuTimers() {
+            let requiresFullRender = false;
+            ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"].forEach(year => {
+                const timerEl = document.getElementById(`menu-timer-${year}`);
+                if (timerEl) {
+                    const lastAttempt = state.quizzes[year]?.lastAttempt || 0; const timeLeft = (lastAttempt + COOLDOWN_MS) - Date.now();
+                    if (timeLeft > 0) {
+                        const hr = Math.floor(timeLeft / 3600000).toString().padStart(2, '0'); const mn = Math.floor((timeLeft % 3600000) / 60000).toString().padStart(2, '0'); const sc = Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0');
+                        timerEl.innerText = `⏳ ${hr}:${mn}:${sc}`; timerEl.style.display = 'block';
+                    } else {
+                        if (timerEl.style.display !== 'none') requiresFullRender = true; timerEl.style.display = 'none';
+                    }
+                }
+            });
+            if (requiresFullRender) renderQuizSelector();
+        }
+
+        function buildInteractiveOMR() {
+            const target = document.getElementById('omr-sheet-target'); target.innerHTML = '';
+            const quizRecord = state.quizzes[state.currentQuizYear];
+            const isOnCooldown = quizRecord && (Date.now() - quizRecord.lastAttempt < COOLDOWN_MS);
+
+            for (let idx = 0; idx < 20; idx++) {
+                const qNum = 21 + idx; const row = document.createElement('div'); row.className = 'omr-input-row';
+                let markup = `<div class="omr-question-number">${qNum}</div>`;
+                ['A', 'B', 'C', 'D'].forEach(letter => {
+                    let checkedStr = (isOnCooldown && quizRecord.answers && quizRecord.answers[idx] === letter) ? 'checked' : '';
+                    let disabledStr = isOnCooldown ? 'disabled' : '';
+                    markup += `<div class="omr-bubble-wrapper"><input type="radio" class="omr-radio-input" name="omr_q_${qNum}" value="${letter}" ${checkedStr} ${disabledStr}></div>`;
+                });
+                let feedbackHtml = '<div></div>';
+                if (isOnCooldown && quizRecord.answers) {
+                    const playerAns = quizRecord.answers[idx]; const correctAns = QUIZ_DATA[state.currentQuizYear].answers[idx];
+                    if (playerAns === correctAns) feedbackHtml = '<div class="omr-feedback"><span style="color:var(--accent);">✅</span></div>';
+                    else feedbackHtml = '<div class="omr-feedback"><span style="color:var(--danger);">❌</span></div>';
+                }
+                markup += feedbackHtml; row.innerHTML = markup; target.appendChild(row);
+            }
+            const submitBtn = document.getElementById('btn-submit-quiz'); const alertText = document.getElementById('omr-lockout-text');
+            if (isOnCooldown) { submitBtn.disabled = true; alertText.style.display = 'block'; } else { submitBtn.disabled = false; alertText.style.display = 'none'; }
+        }
+
+        function syncOptionBWorkspaceUI() {
+            const pdfView = document.getElementById('quiz-pdf-view'); const omrView = document.getElementById('quiz-omr-view');
+            const toggleIcon = document.getElementById('toggle-icon'); const toggleText = document.getElementById('toggle-text');
+            if (currentWorkspaceMode === 'pdf') {
+                pdfView.style.display = 'block'; omrView.style.display = 'none'; toggleIcon.innerText = "✏️"; toggleText.innerText = "Open Answer Sheet (→)";
+            } else {
+                pdfView.style.display = 'none'; omrView.style.display = 'flex'; toggleIcon.innerText = "📖"; toggleText.innerText = "(←) View Question PDF";
+            }
+        }
+
+        initApp();
+
+    </script>
+</body>
+</html>
