@@ -104,7 +104,7 @@
         .plot-card.locked .plot-card-header { color: #475569; background: rgba(226,232,240,0.8); cursor: not-allowed; }
 
         .soil-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #4a2e1b; padding: 10px; border-radius: 14px; border: 5px solid #361f10; box-shadow: 0 8px 16px rgba(0,0,0,0.35); cursor: pointer; transition: transform 0.2s;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #4a2e1b; padding: 10px; border-radius: 14px; border: 5px solid #361f10; box-shadow: 0 8px 16px rgba(0,0,0,0.35); transition: transform 0.2s;
         }
         .plot-card:hover:not(.locked) .soil-grid { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,0,0,0.4); }
         .plot-card.locked .soil-grid { background: #94a3b8; border-color: #64748b; cursor: not-allowed; transform: none; }
@@ -373,6 +373,13 @@
         <div id="view-quiz" class="view-section">
             <div class="quiz-menu-container">
                 <h3 class="quiz-menu-title">Select a Historical Archive to Verify Knowledge</h3>
+                
+                <!-- Category Tabs -->
+                <div class="flex justify-center gap-4 mb-6">
+                    <button class="px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition" id="cat-btn-science" onclick="setQuizCategory('science')">Science (Biology)</button>
+                    <button class="px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition" id="cat-btn-pure" onclick="setQuizCategory('pure')">Pure Biology</button>
+                </div>
+
                 <div class="quiz-grid" id="quiz-year-selector"></div>
             </div>
         </div>
@@ -517,7 +524,7 @@
     </div>
 
     <!-- Background Music Player -->
-    <audio id="bgm-audio" loop src="https://nu.vgmtreasurechest.com/soundtracks/doki-doki-literature-club-official-soundtrack/izzackus/1-01.%20Doki%20Doki%20Literature%20Club%21.mp3"></audio>
+    <audio id="bgm-audio" loop src="https://nu.vgmtreasurechest.com/soundtracks/doki-doki-literature-club-gamerip/fpiuykdn/01.%20Doki%20Doki%20Literature%20Club%21%20%28Main%20Theme%29.mp3"></audio>
 
     <script type="module">
         let db, auth, currentUser, userDocRef;
@@ -560,7 +567,6 @@
             "2016": { pdfUrl: "https://drive.google.com/file/d/17IROr-5z5cqYKi2Q3iRJ0lOa8Ilgy5UD/preview", answers: ["B","C","A","D","A","A","A","B","C","D","C","C","B","D","C","D","B","D","D","C"] }
         };
 
-        // Complete base template ensures new nested variables are generated successfully on upgrades
         const defaultState = {
             coins: 0, ap: 24, lastApTime: Date.now(), completedSets: 0, lastSaveTime: Date.now(),
             unlocked: { shop: false, rabbit: false, land: false, firstDiscountUsed: false, fire: false, pond: false, warriorRabbit: false, potUpgrade: false, recipes: false, scrollSize: false, scrollQuality: false, scrollMagic: false }, 
@@ -574,6 +580,7 @@
             rabbits: [{ assignedPlot: -1, task: '' }, { assignedPlot: -1, task: '' }, { assignedPlot: -1, task: '' }],
             cooking: { active: false, endTime: 0, recipe: null, name: '' },
             potSize: 9,
+            potUpgradesBought: 0,
             buffs: { 
                 coinMulti: { active: false, expiry: 0 }, 
                 seeSize: { active: false, expiry: 0 }, 
@@ -586,6 +593,7 @@
         let state = JSON.parse(JSON.stringify(defaultState));
         let activeTab = 'farm';
         let currentWorkspaceMode = 'pdf';
+        let currentQuizCategory = 'science';
         const COOLDOWN_MS = 12 * 60 * 60 * 1000; 
 
         // Plot Manager State
@@ -623,7 +631,6 @@
             } catch(e) { startGameLogic(); }
         }
 
-        // Deep merge utility ensuring seamless updates when properties are added
         function deepMergeState(target, source) {
             for (const key in source) {
                 if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key]) {
@@ -639,10 +646,8 @@
             try { 
                 let saved = localStorage.getItem('soloTowerFarmingSaveMaster');
                 if (!saved) {
-                    // Fallback to previous version key to migrate user gracefully
                     saved = localStorage.getItem('soloTowerFarmingStatev8'); 
                 }
-                
                 if (saved) { 
                     let parsed = JSON.parse(saved);
                     state = deepMergeState(JSON.parse(JSON.stringify(defaultState)), parsed);
@@ -679,6 +684,8 @@
                 state.plots.push({ slots: initialSlots });
             }
             while(state.rabbits.length < 3) state.rabbits.push({ assignedPlot: -1, task: '' });
+
+            state.potSize = 9 + (state.potUpgradesBought || 0);
 
             processOfflineProgress();
             
@@ -802,7 +809,7 @@
             }
 
             if (state.cooking.active && now >= state.cooking.endTime) {
-                applyCookingBuff(state.cooking.recipe, state.cooking.magicAvg);
+                applyCookingBuff(state.cooking.recipe, state.cooking.magicAvg, state.cooking.durationMin);
                 state.cooking.active = false; state.cooking.recipe = null; stateChanged = true;
                 showCustomNotification(`Campfire Cooking Completed`, `Your ${state.cooking.name} has finished cooking and its effects are now active!`);
             }
@@ -1359,7 +1366,8 @@
             } else if (counts.tomato >= 3) {
                 return { id: 'roasted_cherry', name: 'Roasted Tomato (Reveal Seed Size)', time: 5 };
             } else if (counts.piranha >= 3) {
-                return { id: 'roasted_piranha', name: 'Roasted Piranha (Reveal Seed Magic)', time: 5 };
+                // 1 Piranha yields 5 min buff duration
+                return { id: 'roasted_piranha', name: 'Roasted Piranha (Reveal Seed Magic)', time: counts.piranha * 5 };
             } else if (counts.greenOnion >= 3) {
                 return { id: 'roasted_onion', name: 'Roasted Onion (3x Quiz Coin Multi)', time: 3 };
             }
@@ -1397,7 +1405,8 @@
                 endTime: Date.now() + (recipe.time * 60000),
                 recipe: recipe.id,
                 name: recipe.name,
-                magicAvg: magicAvg
+                magicAvg: magicAvg,
+                durationMin: recipe.time
             };
 
             closeModal('modal-cooking');
@@ -1405,15 +1414,15 @@
             triggerSaveGame(); renderFarm(); renderStorage();
         };
 
-        function applyCookingBuff(recipeId, magicAvg) {
-            const durationMin = magicAvg * 2; 
-            const durationMs = durationMin * 60000;
+        function applyCookingBuff(recipeId, magicAvg, durationMin) {
+            const defaultDurationMs = magicAvg * 2 * 60000;
+            const customDurationMs = durationMin ? (durationMin * 60000) : defaultDurationMs;
             const now = Date.now();
 
-            if (recipeId === 'roasted_onion') { state.buffs.coinMulti = { active: true, expiry: now + durationMs }; }
-            if (recipeId === 'roasted_cherry') { state.buffs.seeSize = { active: true, expiry: now + durationMs }; }
-            if (recipeId === 'roasted_potato') { state.buffs.seeQuality = { active: true, expiry: now + durationMs }; }
-            if (recipeId === 'roasted_piranha') { state.buffs.seeMagic = { active: true, expiry: now + durationMs }; }
+            if (recipeId === 'roasted_onion') { state.buffs.coinMulti = { active: true, expiry: now + customDurationMs }; }
+            if (recipeId === 'roasted_cherry') { state.buffs.seeSize = { active: true, expiry: now + customDurationMs }; }
+            if (recipeId === 'roasted_potato') { state.buffs.seeQuality = { active: true, expiry: now + customDurationMs }; }
+            if (recipeId === 'roasted_piranha') { state.buffs.seeMagic = { active: true, expiry: now + customDurationMs }; }
             if (recipeId === 'mystic_stew') {
                 const megaMs = 10 * 60000;
                 state.buffs.coinMulti = { active: true, expiry: now + megaMs };
@@ -1504,10 +1513,12 @@
         };
 
         window.buyPotUpgrade = function(cost) {
-            if(state.coins >= cost && !state.unlocked.potUpgrade) {
-                state.coins -= cost; state.unlocked.potUpgrade = true; state.potSize = 15;
+            if(state.coins >= cost && state.potUpgradesBought < 7) {
+                state.coins -= cost; 
+                state.potUpgradesBought++;
+                state.potSize = 9 + state.potUpgradesBought;
                 triggerSaveGame(); renderShop();
-                showCustomNotification("Merchant Stock Unlocked", `Teo: "Our campfire pot upgrade complete! Can now hold 15 ingredients, nya!"`);
+                showCustomNotification("Merchant Stock Unlocked", `Teo: "Our campfire pot upgrade complete! Can now hold ${state.potSize} ingredients, nya!"`);
             }
         };
 
@@ -1561,6 +1572,20 @@
 
         window.toggleOptionBWorkspaceMode = function() {
             currentWorkspaceMode = (currentWorkspaceMode === 'pdf') ? 'omr' : 'pdf'; syncOptionBWorkspaceUI();
+        };
+
+        window.setQuizCategory = function(cat) {
+            currentQuizCategory = cat;
+            const btnScience = document.getElementById('cat-btn-science');
+            const btnPure = document.getElementById('cat-btn-pure');
+            if (cat === 'science') {
+                btnScience.className = "px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition";
+                btnPure.className = "px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+            } else {
+                btnScience.className = "px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+                btnPure.className = "px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition";
+            }
+            renderQuizSelector();
         };
 
         window.submitQuiz = function() {
@@ -1747,7 +1772,6 @@
                 { id: 'buy_pt', key: 'potato', name: "Blue Moon Potato Seeds (x9)", cost: 300, action: () => window.buySeeds('potato', 300) }
             ];
 
-            // Calculate quiz threshold totals for shop logic
             let count15 = 0, count18 = 0, count20 = 0;
             Object.values(state.quizzes).forEach(q => {
                 if (q.score >= 15) count15++;
@@ -1756,11 +1780,14 @@
             });
 
             if (state.unlocked.land && state.maxPlots < 6) {
+                // Land cost triples for each plot purchase
                 const landCost = 50 * Math.pow(3, state.maxPlots - 1);
                 storeItems.push({ id: 'buy_land', key: 'land', name: `Buy Land deed (Plot ${state.maxPlots + 1})`, cost: landCost, action: () => window.buyLand(landCost) });
             }
-            if (state.completedSets >= 9 && !state.unlocked.potUpgrade) {
-                storeItems.push({ id: 'buy_pot', key: 'pot', name: `Large Cooking Pot Upgrade`, cost: 800, action: () => window.buyPotUpgrade(800) });
+            if (state.completedSets >= 9 && state.potUpgradesBought < 7) {
+                // Pot upgrade cost triples for each purchase
+                const potCost = 800 * Math.pow(3, state.potUpgradesBought);
+                storeItems.push({ id: 'buy_pot', key: 'pot', name: `Large Cooking Pot Upgrade (+1 Slot) [${state.potUpgradesBought}/7]`, cost: potCost, action: () => window.buyPotUpgrade(potCost) });
             }
             if (state.completedSets >= 10 && !state.unlocked.recipes) {
                 storeItems.push({ id: 'buy_rec', key: 'recipe', name: `Secret Mystic Recipe`, cost: 1500, action: () => window.buyRecipes(1500) });
@@ -1783,7 +1810,6 @@
         }
 
         function renderStorage() {
-            // Seeds
             const seedContainer = document.getElementById('inventory-container'); seedContainer.innerHTML = ''; let seedsPresent = false;
             Object.keys(state.inventory).forEach(typeKey => {
                 const count = state.inventory[typeKey].length;
@@ -1795,7 +1821,6 @@
             });
             if(!seedsPresent) seedContainer.innerHTML = `<p style="color:var(--text-muted); padding:10px;">Stock list empty of coordinates seeds.</p>`;
 
-            // Ingredients
             const cropContainer = document.getElementById('crop-container'); cropContainer.innerHTML = ''; 
             
             Object.keys(state.crops).forEach(typeKey => {
@@ -1809,13 +1834,13 @@
 
             if(state.honey > 0) {
                 const div = document.createElement('div'); div.className = 'inventory-card';
-                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🍯</div><strong>Honey Jars</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.honey}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.honey * 15; state.honey=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (15💰 each)</button>`;
+                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🍯</div><strong>Honey Jars</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.honey}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.honey * 5; state.honey=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (5💰 each)</button>`;
                 cropContainer.appendChild(div);
             }
 
             if(state.piranhas > 0) {
                 const div = document.createElement('div'); div.className = 'inventory-card';
-                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🐟</div><strong>Piranhas</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.piranhas}</p>`;
+                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🐟</div><strong>Piranhas</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.piranhas}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.piranhas * 5; state.piranhas=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (5💰 each)</button>`;
                 cropContainer.appendChild(div);
             }
         }
@@ -1866,20 +1891,33 @@
 
         function renderQuizSelector() {
             const container = document.getElementById('quiz-year-selector'); container.innerHTML = '';
-            const allYears = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"];
-            allYears.forEach(year => {
-                const div = document.createElement('div'); div.className = `quiz-year-card`;
-                const lastAttempt = state.quizzes[year]?.lastAttempt || 0;
-                const onCooldown = (Date.now() - lastAttempt) < COOLDOWN_MS;
-                const badgeHtml = onCooldown ? `<span class="status-badge" style="background:rgba(210,153,34,0.15); color:var(--warning);">Cooldown Active</span>` : `<span class="status-badge available">Available</span>`;
-                div.innerHTML = `<div style="font-size:2rem;">📁</div><div>${year} Database</div>${badgeHtml}<div id="menu-timer-${year}" class="card-timer" style="display:none;"></div>`;
-                div.onclick = () => window.launchQuizWorkspace(year);
-                container.appendChild(div);
-            });
-            updateQuizMenuTimers();
+            
+            if (currentQuizCategory === 'science') {
+                const allYears = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"];
+                allYears.forEach(year => {
+                    const div = document.createElement('div'); div.className = `quiz-year-card`;
+                    const lastAttempt = state.quizzes[year]?.lastAttempt || 0;
+                    const onCooldown = (Date.now() - lastAttempt) < COOLDOWN_MS;
+                    const badgeHtml = onCooldown ? `<span class="status-badge" style="background:rgba(210,153,34,0.15); color:var(--warning);">Cooldown Active</span>` : `<span class="status-badge available">Available</span>`;
+                    div.innerHTML = `<div style="font-size:2rem;">📁</div><div>${year} Database</div>${badgeHtml}<div id="menu-timer-${year}" class="card-timer" style="display:none;"></div>`;
+                    div.onclick = () => window.launchQuizWorkspace(year);
+                    container.appendChild(div);
+                });
+                updateQuizMenuTimers();
+            } else {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white p-8 rounded-2xl border-2 border-dashed border-slate-300 text-center max-w-xl mx-auto my-6">
+                        <div class="text-5xl mb-4">🧬</div>
+                        <h4 class="text-xl font-bold text-slate-800 mb-2">Pure Biology Database</h4>
+                        <p class="text-slate-500 text-sm mb-4">The Pure Biology archives are currently sealed on this floor of the Tower. Keep clearing the Science (Biology) archives to discover more!</p>
+                        <div class="inline-block text-xs font-semibold px-3 py-1 bg-amber-100 text-amber-800 rounded-full">Coming Soon on Next Floor</div>
+                    </div>
+                `;
+            }
         }
 
         function updateQuizMenuTimers() {
+            if (currentQuizCategory !== 'science') return;
             let requiresFullRender = false;
             ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"].forEach(year => {
                 const timerEl = document.getElementById(`menu-timer-${year}`);
