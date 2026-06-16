@@ -36,33 +36,33 @@
         body { font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
         header {
-            background: var(--sky-gradient); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--accent); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;
+            background: var(--sky-gradient); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--accent); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 8px;
         }
 
-        .header-title h2 { font-size: 1.25rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; color: #0369a1; }
-        .header-stats { display: flex; gap: 12px; font-weight: bold; font-size: 0.95rem; background: var(--panel-bg); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--panel-border); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: center; flex-wrap: wrap;}
+        .header-title h2 { font-size: 1.15rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; color: #0369a1; }
+        .header-stats { display: flex; gap: 10px; font-weight: bold; font-size: 0.9rem; background: var(--panel-bg); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--panel-border); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: center; flex-wrap: wrap;}
         .coin-icon { color: #eab308; margin-right: 2px; }
-        .ap-icon { color: #3b82f6; font-size: 1.1rem; }
+        .ap-icon { color: #3b82f6; font-size: 1.05rem; }
 
-        .buff-bar { display: flex; gap: 8px; font-size: 0.8rem; margin-top: 4px; }
-        .buff-badge { background: #1e293b; color: white; padding: 2px 8px; border-radius: 12px; font-family: monospace; }
+        .buff-bar { display: flex; gap: 6px; font-size: 0.75rem; margin-top: 2px; }
+        .buff-badge { background: #1e293b; color: white; padding: 1px 6px; border-radius: 10px; font-family: monospace; }
 
-        nav { display: flex; gap: 8px; padding: 10px 20px; background: #ffffff; border-bottom: 1px solid var(--panel-border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow-x: auto; }
-        .tab-btn { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--panel-border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
+        nav { display: flex; gap: 6px; padding: 6px 16px; background: #ffffff; border-bottom: 1px solid var(--panel-border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow-x: auto; }
+        .tab-btn { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; white-space: nowrap; font-size: 0.85rem; }
         .tab-btn:hover { background-color: #e2e8f0; color: var(--text-main); }
         .tab-btn.active { background-color: var(--accent); color: #fff; border-color: var(--accent); }
         .tab-btn:disabled { display: none; }
 
-        main { flex: 1; overflow-y: auto; position: relative; padding-bottom: 20px; background: radial-gradient(circle at center, #f0fdf4 0%, #dcfce7 100%); }
-        .view-section { display: none; padding: 25px; height: 100%; }
+        main { flex: 1; overflow-y: auto; position: relative; padding-bottom: 12px; background: radial-gradient(circle at center, #f0fdf4 0%, #dcfce7 100%); }
+        .view-section { display: none; padding: 12px; height: 100%; }
         .view-section.active { display: block; }
 
         .teo-banner {
-            display: flex; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 12px 18px; margin-bottom: 25px; align-items: center; gap: 15px; max-width: 1000px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 8px 14px; margin-bottom: 12px; align-items: center; gap: 12px; max-width: 1000px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        .teo-banner-pic { font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
-        .teo-banner-speech { color: #78350f; font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
+        .teo-banner-pic { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+        .teo-banner-speech { color: #78350f; font-size: 0.88rem; line-height: 1.3; font-weight: 500; }
 
         .farm-wrapper { max-width: 1200px; margin: 0 auto; position: relative; }
         
@@ -74,37 +74,37 @@
             background-size: 60px 60px;
             background-position: 0 0, 30px 30px;
             border: 4px solid #16a34a;
-            border-radius: 24px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 16px;
             box-shadow: inset 0 6px 20px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.08);
             position: relative;
-            min-height: 450px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 16px;
         }
 
-        .scenery-element { position: absolute; font-size: 2.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); pointer-events: none; z-index: 1; }
-        .scenery-tree-1 { top: 15px; left: 20px; }
-        .scenery-tree-2 { bottom: 20px; right: 20px; }
-        .scenery-flower-1 { top: 180px; left: 15px; font-size: 1.5rem; }
-        .scenery-flower-2 { bottom: 150px; right: 25px; font-size: 1.5rem; }
-        .scenery-fence-left { top: 50%; left: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.5rem; opacity: 0.8; }
-        .scenery-fence-right { top: 50%; right: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.5rem; opacity: 0.8; }
+        .scenery-element { position: absolute; font-size: 2.2rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); pointer-events: none; z-index: 1; }
+        .scenery-tree-1 { top: 12px; left: 16px; }
+        .scenery-tree-2 { bottom: 16px; right: 16px; }
+        .scenery-flower-1 { top: 160px; left: 12px; font-size: 1.3rem; }
+        .scenery-flower-2 { bottom: 120px; right: 20px; font-size: 1.3rem; }
+        .scenery-fence-left { top: 50%; left: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.3rem; opacity: 0.8; }
+        .scenery-fence-right { top: 50%; right: -10px; transform: translateY(-50%) rotate(90deg); font-size: 1.3rem; opacity: 0.8; }
 
         .farm-plots-container {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; z-index: 2;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; position: relative; z-index: 2;
         }
 
-        .plot-card { background: transparent; border: none; padding: 0; box-shadow: none; width: 250px; position: relative; }
+        .plot-card { background: transparent; border: none; padding: 0; box-shadow: none; width: 230px; position: relative; }
         .plot-card-header {
-            text-align: center; font-weight: 800; font-size: 0.95rem; color: #042f1a; margin-bottom: 8px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); background: rgba(255,255,255,0.7); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-left: auto; margin-right: auto; width: fit-content; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.1s;
+            text-align: center; font-weight: 800; font-size: 0.9rem; color: #042f1a; margin-bottom: 6px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 12px; display: inline-block; margin-left: auto; margin-right: auto; width: fit-content; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.1s;
         }
         .plot-card:hover:not(.locked) .plot-card-header { transform: scale(1.05); background: white; }
         .plot-card.locked .plot-card-header { color: #475569; background: rgba(226,232,240,0.8); cursor: not-allowed; }
 
         .soil-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #4a2e1b; padding: 10px; border-radius: 14px; border: 5px solid #361f10; box-shadow: 0 8px 16px rgba(0,0,0,0.35); transition: transform 0.2s;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #4a2e1b; padding: 8px; border-radius: 12px; border: 4px solid #361f10; box-shadow: 0 8px 16px rgba(0,0,0,0.35); cursor: pointer; transition: transform 0.2s;
         }
         .plot-card:hover:not(.locked) .soil-grid { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,0,0,0.4); }
         .plot-card.locked .soil-grid { background: #94a3b8; border-color: #64748b; cursor: not-allowed; transform: none; }
@@ -116,22 +116,22 @@
         .plot-card.locked .soil-slot { background-color: #cbd5e1; border-color: #94a3b8; }
 
         .scenery-hive-container, .scenery-pond-container, .scenery-fire-container {
-            align-self: center; display: flex; flex-direction: column; align-items: center; position: relative; background: rgba(255,255,255,0.85); border-radius: 20px; padding: 15px; width: 250px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); z-index: 2; border: 2px solid;
+            align-self: center; display: flex; flex-direction: column; align-items: center; position: relative; background: rgba(255,255,255,0.85); border-radius: 16px; padding: 12px; width: 230px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); z-index: 2; border: 2px solid;
         }
         .scenery-hive-container { border-color: #fbbf24; }
         .scenery-pond-container { border-color: #3b82f6; }
         .scenery-fire-container { border-color: #ef4444; }
 
-        .hive-scenery-tree { font-size: 4rem; position: relative; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12)); }
-        .hive-attached { position: absolute; font-size: 1.8rem; bottom: -5px; right: 15px; animation: sway 3s ease-in-out infinite alternate; transform-origin: top center; }
+        .hive-scenery-tree { font-size: 3.5rem; position: relative; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12)); }
+        .hive-attached { position: absolute; font-size: 1.6rem; bottom: -5px; right: 12px; animation: sway 3s ease-in-out infinite alternate; transform-origin: top center; }
         @keyframes sway { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
-        .pond-emoji { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
-        .fire-emoji { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); animation: flicker 1s infinite alternate; }
+        .pond-emoji { font-size: 3.5rem; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+        .fire-emoji { font-size: 3.5rem; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); animation: flicker 1s infinite alternate; }
         @keyframes flicker { 0% { opacity: 0.9; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1.02); } }
 
-        .mini-emoji { font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); max-width: 90%; max-height: 90%; object-fit: contain; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .mini-emoji { font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); max-width: 90%; max-height: 90%; object-fit: contain; line-height: 1; display: flex; align-items: center; justify-content: center; }
         
-        .mini-timer { font-size: 0.68rem; color: #fff; font-family: monospace; font-weight: bold; background: rgba(15, 23, 42, 0.9); padding: 1px 4px; border-radius: 4px; margin-top: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .mini-timer { font-size: 0.65rem; color: #fff; font-family: monospace; font-weight: bold; background: rgba(15, 23, 42, 0.9); padding: 1px 4px; border-radius: 4px; margin-top: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
         .soil-slot.needs-water { animation: pulseDry 2s infinite; border-color: #3b82f6; }
         .soil-slot.harvest-ready { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
@@ -140,21 +140,21 @@
         @keyframes pulseDry { 0% { box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0.6); } 70% { box-shadow: inset 0 0 0 6px rgba(59, 130, 246, 0); } 100% { box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0); } }
 
         .quiz-menu-container { max-width: 900px; margin: 0 auto; text-align: center; }
-        .quiz-menu-title { margin-bottom: 25px; font-size: 1.5rem; color: #0284c7; font-weight: bold; }
-        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .quiz-menu-title { margin-bottom: 20px; font-size: 1.35rem; color: #0284c7; font-weight: bold; }
+        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
         
         .quiz-year-card {
-            background: #ffffff; border: 2px solid var(--panel-border); border-radius: 12px; padding: 20px 15px; cursor: pointer; font-size: 1.15rem; font-weight: bold; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            background: #ffffff; border: 2px solid var(--panel-border); border-radius: 12px; padding: 15px 12px; cursor: pointer; font-size: 1.05rem; font-weight: bold; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
         .quiz-year-card:hover:not(.locked) { border-color: var(--accent); transform: translateY(-2px); background: #f8fafc; }
         
-        .status-badge { font-size: 0.75rem; padding: 3px 8px; border-radius: 10px; background: rgba(0,0,0,0.05); font-weight: normal; }
+        .status-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; background: rgba(0,0,0,0.05); font-weight: normal; }
         .status-badge.available { background: rgba(34, 197, 94, 0.15); color: #16a34a; font-weight: bold; }
-        .card-timer { font-size: 0.85rem; color: var(--warning); font-family: monospace; font-weight: bold; margin-top: 5px; }
+        .card-timer { font-size: 0.8rem; color: var(--warning); font-family: monospace; font-weight: bold; margin-top: 4px; }
 
         .fullscreen-quiz-mode { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #ffffff; z-index: 200; display: none; flex-direction: column; }
-        .quiz-top-bar { background: #0f172a; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent); }
-        .btn-back-quiz { background: #334155; color: white; border: 1px solid #475569; padding: 8px 16px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .quiz-top-bar { background: #0f172a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent); }
+        .btn-back-quiz { background: #334155; color: white; border: 1px solid #475569; padding: 6px 12px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
         .btn-back-quiz:hover { background: #475569; }
 
         .quiz-viewport-wrapper { flex: 1; position: relative; overflow: hidden; }
@@ -162,94 +162,95 @@
         .quiz-pdf-viewport iframe { width: 100%; height: 100%; border: none; }
         .quiz-omr-viewport { width: 100%; height: 100%; background: #fdfbf7; color: #161b17; display: none; flex-direction: column; position: relative; }
 
-        .omr-scroller { flex: 1; overflow-y: auto; padding: 15px; max-width: 420px; margin: 0 auto; width: 100%; }
-        .omr-header-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; text-align: center; font-weight: bold; font-size: 0.9rem; color: #475569; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 6px; }
-        .omr-input-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+        .omr-scroller { flex: 1; overflow-y: auto; padding: 12px; max-width: 420px; margin: 0 auto; width: 100%; }
+        .omr-header-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; text-align: center; font-weight: bold; font-size: 0.85rem; color: #475569; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 4px; }
+        .omr-input-row { display: grid; grid-template-columns: 35px repeat(4, 1fr) 30px; align-items: center; padding: 3px 0; border-bottom: 1px solid #f1f5f9; }
         .omr-input-row:hover { background-color: #f8fafc; }
-        .omr-question-number { font-weight: bold; font-size: 0.9rem; color: #1e293b; text-align: center; }
+        .omr-question-number { font-weight: bold; font-size: 0.85rem; color: #1e293b; text-align: center; }
         
         .omr-bubble-wrapper { display: flex; justify-content: center; align-items: center; }
-        .omr-radio-input { appearance: none; width: 18px; height: 18px; border: 2px solid #64748b; border-radius: 50%; cursor: pointer; outline: none; transition: all 0.1s; position: relative; }
+        .omr-radio-input { appearance: none; width: 16px; height: 18px; border: 2px solid #64748b; border-radius: 50%; cursor: pointer; outline: none; transition: all 0.1s; position: relative; }
         .omr-radio-input:checked { background-color: #0f172a; border-color: #0f172a; box-shadow: inset 0 0 0 3px #ffffff; }
         .omr-radio-input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .omr-feedback { text-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+        .omr-feedback { text-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
 
-        .omr-footer-action { background: #f8fafc; padding: 12px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; }
-        .btn-submit-omr { background: var(--accent); color: white; border: none; padding: 10px 24px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 420px; }
+        .omr-footer-action { background: #f8fafc; padding: 10px 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; }
+        .btn-submit-omr { background: var(--accent); color: white; border: none; padding: 8px 20px; font-size: 0.95rem; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 420px; }
         .btn-submit-omr:hover:not(:disabled) { background: var(--accent-hover); }
         .btn-submit-omr:disabled { background: #94a3b8; cursor: not-allowed; }
-        .omr-lockout-alert { text-align: center; color: var(--danger); font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; }
+        .omr-lockout-alert { text-align: center; color: var(--danger); font-weight: bold; margin-bottom: 6px; font-size: 0.8rem; }
 
-        .floating-view-toggle { position: absolute; bottom: 25px; right: 25px; z-index: 50; background-color: var(--tower-blue); color: white; border: none; padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; transition: transform 0.2s, background-color 0.2s; }
+        .floating-view-toggle { position: absolute; bottom: 20px; right: 20px; z-index: 50; background-color: var(--tower-blue); color: white; border: none; padding: 10px 16px; font-size: 0.9rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 6px; transition: transform 0.2s, background-color 0.2s; }
         .floating-view-toggle:hover { transform: scale(1.05); background-color: #0284c7; }
 
-        .teo-avatar-container { display: flex; background: #fffbeb; border: 2px solid #fcd34d; border-radius: 12px; padding: 20px; margin-bottom: 25px; align-items: center; gap: 20px; max-width: 800px; margin-left: auto; margin-right: auto; }
-        .teo-pic { font-size: 4.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
-        .teo-bubble { background: #ffffff; border: 1px solid #fcd34d; border-radius: 10px; padding: 15px; position: relative; flex: 1; color: #78350f; font-size: 1rem; line-height: 1.5; font-style: italic; }
+        .teo-avatar-container { display: flex; background: #fffbeb; border: 2px solid #fcd34d; border-radius: 12px; padding: 10px; margin-bottom: 10px; align-items: center; gap: 10px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .teo-pic { font-size: 2.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+        .teo-bubble { background: #ffffff; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; position: relative; flex: 1; color: #78350f; font-size: 0.95rem; line-height: 1.3; font-style: italic; }
         .teo-bubble::after { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border-width: 10px 10px 10px 0; border-style: solid; border-color: transparent #ffffff transparent transparent; display: block; width: 0; }
         .teo-bubble::before { content: ''; position: absolute; left: -11px; top: 50%; transform: translateY(-50%); border-width: 10px 10px 10px 0; border-style: solid; border-color: transparent #fcd34d transparent transparent; display: block; width: 0; z-index: -1; }
 
-        .shop-grid, .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .shop-card, .inventory-card { background: #ffffff; border: 2px solid var(--panel-border); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.04); transition: all 0.2s; }
+        .shop-grid, .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .shop-card, .inventory-card { background: #ffffff; border: 2px solid var(--panel-border); padding: 10px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s; }
         .shop-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
-        .shop-card h4 { font-size: 1.1rem; margin-bottom: 5px; color: var(--text-main); }
-        .shop-card-cost { font-size: 1.5rem; color: #b45309; font-weight: bold; margin: 10px 0; }
-        .shop-card button { background: var(--tower-blue); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; }
+        .shop-card h4 { font-size: 1rem; margin-bottom: 4px; color: var(--text-main); }
+        .shop-card-cost { font-size: 1.2rem; color: #b45309; font-weight: bold; margin: 6px 0; }
+        .shop-card button { background: var(--tower-blue); border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; font-size: 0.9rem; }
         .shop-card button:hover:not(:disabled) { background: #0369a1; }
         .shop-card button:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
 
-        .inventory-card button { background: var(--accent); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-top: 10px; }
+        .inventory-card button { background: var(--accent); border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-top: 8px; font-size: 0.9rem; }
         .inventory-card button:hover { background: var(--accent-hover); }
 
         .rabbit-card { background: #ffffff; border: 2px solid var(--panel-border); padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 20px; }
-        .rabbit-avatar { font-size: 3rem; }
-        .rabbit-controls { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .rabbit-control-row { display: flex; align-items: center; gap: 10px; }
-        .rabbit-select { padding: 8px; border-radius: 6px; border: 1px solid var(--panel-border); background: #f8fafc; font-weight: bold; outline: none; }
+        .rabbit-avatar { font-size: 2.5rem; }
+        .rabbit-controls { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .rabbit-control-row { display: flex; align-items: center; gap: 8px; }
+        .rabbit-select { padding: 6px; border-radius: 6px; border: 1px solid var(--panel-border); background: #f8fafc; font-weight: bold; outline: none; font-size: 0.85rem; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 300; backdrop-filter: blur(4px); }
-        .modal { background: #ffffff; border-radius: 16px; padding: 25px; width: 95%; max-width: 600px; border: 3px solid var(--accent); max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25); color: var(--text-main); position: relative;}
-        .modal h2 { margin-bottom: 15px; color: #15803d; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;}
-        .seed-selection-row { background: #f8fafc; padding: 12px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
-        .seed-selection-row button { background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal { background: #ffffff; border-radius: 16px; padding: 20px; width: 95%; max-width: 550px; border: 3px solid var(--accent); max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25); color: var(--text-main); position: relative;}
+        .modal h2 { margin-bottom: 12px; color: #15803d; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 1.2rem; font-weight: bold; }
+        .seed-selection-row { background: #f8fafc; padding: 10px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+        .seed-selection-row button { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
         
-        .grade-badge { display: inline-block; width: 20px; height: 20px; text-align: center; border-radius: 4px; color: #000; font-weight: bold; font-size: 0.75rem; line-height: 20px; margin-right: 2px; }
+        .grade-badge { display: inline-block; width: 18px; height: 18px; text-align: center; border-radius: 4px; color: #000; font-weight: bold; font-size: 0.7rem; line-height: 18px; margin-right: 2px; }
         .grade-hidden { background: #e2e8f0; color: #64748b; }
 
-        .btn-close-modal { background: #64748b; border: none; color: white; padding: 10px; width: 100%; border-radius: 6px; margin-top: 15px; cursor: pointer; font-weight: bold; }
-        .action-flex-group { display: flex; gap: 12px; margin-top: 25px; }
-        .action-flex-group button { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; color: white;}
+        .btn-close-modal { background: #64748b; border: none; color: white; padding: 8px; width: 100%; border-radius: 6px; margin-top: 12px; cursor: pointer; font-weight: bold; font-size: 0.88rem; }
+        .action-flex-group { display: flex; gap: 10px; margin-top: 20px; }
+        .action-flex-group button { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: white;}
         .btn-action-clear { background: var(--danger); }
 
         .game-alert-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 500; }
-        .game-alert-box { background: #ffffff; border: 2px solid var(--tower-blue); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; text-align: center; color: var(--text-main); }
-        .game-alert-message { margin: 15px 0 20px 0; font-size: 1rem; line-height: 1.4; color: var(--text-muted); }
-        .btn-alert-ok { background: var(--tower-blue); border: none; color: white; padding: 10px 30px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; }
+        .game-alert-box { background: #ffffff; border: 2px solid var(--tower-blue); border-radius: 12px; width: 90%; max-width: 420px; padding: 20px; text-align: center; color: var(--text-main); }
+        .game-alert-message { margin: 12px 0 16px 0; font-size: 0.95rem; line-height: 1.4; color: var(--text-muted); }
+        .btn-alert-ok { background: var(--tower-blue); border: none; color: white; padding: 8px 24px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; }
 
-        .tool-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
-        .tool-btn { flex: 1; background: #e2e8f0; border: 2px solid #cbd5e1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #475569; }
+        .tool-bar { display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; }
+        .tool-btn { flex: 1; background: #e2e8f0; border: 2px solid #cbd5e1; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #475569; font-size: 0.85rem; }
         .tool-btn.active { background: var(--accent); color: white; border-color: var(--accent-hover); box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3); transform: translateY(-2px); }
         
-        .manager-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #4a2e1b; padding: 15px; border-radius: 14px; border: 5px solid #361f10; width: fit-content; margin: 0 auto 20px; }
-        .mgr-slot { background-color: #5c3821; width: 80px; height: 80px; border-radius: 8px; border: 2px dashed #2f1d11; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.1s; }
+        .manager-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #4a2e1b; padding: 12px; border-radius: 12px; border: 4px solid #361f10; width: fit-content; margin: 0 auto 15px; }
+        .mgr-slot { background-color: #5c3821; width: 70px; height: 70px; border-radius: 8px; border: 2px dashed #2f1d11; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.1s; }
         .mgr-slot:hover { border-color: white; background-color: #70472d; }
         .mgr-slot.planted { border-style: solid; border-color: #27170a; background-color: #4f2e1a; }
-        .staged-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 3px solid #fde047; border-radius: 6px; box-shadow: 0 0 15px rgba(253, 224, 71, 0.6); z-index: 10;}
+        .staged-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 3px solid #fde047; border-radius: 6px; box-shadow: 0 0 12px rgba(253, 224, 71, 0.6); z-index: 10;}
         
-        .pot-slot { width: 60px; height: 60px; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: #f8fafc; cursor: pointer;}
+        .pot-slot { width: 50px; height: 50px; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f8fafc; cursor: pointer;}
         .pot-slot.filled { border-style: solid; border-color: var(--accent); background: #f0fdf4; }
-        .pot-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .pot-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px; }
 
         .staged-seed-box {
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.85rem;
         }
         .staged-seed-box.selected {
             border-color: #fbbf24;
@@ -258,27 +259,27 @@
         }
 
         .music-controls {
-            display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 4px 10px; 
+            display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 2px 8px; 
             border-radius: 20px; border: 1px solid #cbd5e1;
         }
 
         @media (max-width: 768px) { 
-            header { flex-direction: column; gap: 10px; text-align: center; }
-            .floating-view-toggle { bottom: 15px; right: 15px; font-size: 0.95rem; padding: 10px 20px; }
-            .farm-pasture-paddock { padding: 15px; border-width: 2px; }
-            .plot-card { width: 100%; max-width: 280px; }
+            header { flex-direction: column; gap: 8px; text-align: center; }
+            .floating-view-toggle { bottom: 12px; right: 12px; font-size: 0.85rem; padding: 8px 14px; }
+            .farm-pasture-paddock { padding: 12px; border-width: 2px; }
+            .plot-card { width: 100%; max-width: 260px; }
             .scenery-element { opacity: 0.2; }
             .scenery-fence-left, .scenery-fence-right { display: none; }
-            .scenery-hive-container, .scenery-pond-container, .scenery-fire-container { width: 100%; max-width: 280px; }
-            .teo-avatar-container { flex-direction: column; text-align: center; gap: 10px; }
+            .scenery-hive-container, .scenery-pond-container, .scenery-fire-container { width: 100%; max-width: 260px; }
+            .teo-avatar-container { flex-direction: column; text-align: center; gap: 8px; }
             .teo-bubble::after, .teo-bubble::before { display: none; }
             .rabbit-card { flex-direction: column; text-align: center; }
             .rabbit-control-row { flex-direction: column; align-items: stretch; text-align: left; }
-            .rabbit-control-row label { width: auto; margin-bottom: 5px; }
+            .rabbit-control-row label { width: auto; margin-bottom: 4px; }
             .action-flex-group { flex-direction: column; }
-            .view-section { padding: 15px; }
+            .view-section { padding: 8px; }
             .tool-bar { flex-direction: column; }
-            .music-controls { margin-top: 5px; justify-content: center; width: 100%; }
+            .music-controls { margin-top: 4px; justify-content: center; width: 100%; }
         }
     </style>
 </head>
@@ -375,9 +376,9 @@
                 <h3 class="quiz-menu-title">Select a Historical Archive to Verify Knowledge</h3>
                 
                 <!-- Category Tabs -->
-                <div class="flex justify-center gap-4 mb-6">
-                    <button class="px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition" id="cat-btn-science" onclick="setQuizCategory('science')">Science (Biology)</button>
-                    <button class="px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition" id="cat-btn-pure" onclick="setQuizCategory('pure')">Pure Biology</button>
+                <div class="flex justify-center gap-4 mb-4 text-sm">
+                    <button class="px-4 py-1.5 rounded-lg font-bold bg-emerald-500 text-white transition" id="cat-btn-science" onclick="setQuizCategory('science')">Science (Biology)</button>
+                    <button class="px-4 py-1.5 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition" id="cat-btn-pure" onclick="setQuizCategory('pure')">Pure Biology</button>
                 </div>
 
                 <div class="quiz-grid" id="quiz-year-selector"></div>
@@ -390,21 +391,21 @@
                 <div class="teo-bubble" id="teo-speech">"Nya! Plant seeds, harvest crops! Sell crops for coins or extract them into seeds to breed stronger generations, nya!"</div>
             </div>
             
-            <h3 style="font-size: 1.15rem; margin-bottom: 12px; border-bottom: 1px solid var(--panel-border); padding-bottom: 6px; color: #1e3f20;">Teo's Supply Shop</h3>
+            <h3 style="margin-top: 10px; border-top: 1px solid var(--panel-border); padding-top: 10px; font-size: 1.1rem; margin-bottom: 8px; color: #1e3f20;">Teo's Supply Shop</h3>
             <div class="shop-grid" id="shop-container"></div>
             
-            <h3 style="margin-top: 40px; border-top: 1px solid var(--panel-border); padding-top: 25px; font-size: 1.15rem; margin-bottom: 12px; color: #1e3f20;">🎒 Bag Storage (Seeds)</h3>
+            <h3 style="margin-top: 15px; border-top: 1px solid var(--panel-border); padding-top: 10px; font-size: 1.1rem; margin-bottom: 8px; color: #1e3f20;">🎒 Bag Storage (Seeds)</h3>
             <div class="inventory-grid" id="inventory-container"></div>
 
-            <h3 style="margin-top: 40px; border-top: 1px solid var(--panel-border); padding-top: 25px; font-size: 1.15rem; margin-bottom: 12px; color: #1e3f20;">📦 Farm Storage (Ingredients)</h3>
+            <h3 style="margin-top: 15px; border-top: 1px solid var(--panel-border); padding-top: 10px; font-size: 1.1rem; margin-bottom: 8px; color: #1e3f20;">📦 Farm Storage (Ingredients)</h3>
             <div class="inventory-grid" id="crop-container"></div>
         </div>
 
         <div id="view-rabbit" class="view-section">
-            <h3 style="font-size: 1.25rem; color: #1e3f20;">🐰 Rabbit Helper Management</h3>
-            <p style="color: var(--text-muted); margin-top: 4px;">Assign rabbits to automate your plots. Costs 1 ⚡ to reassign a standard rabbit.</p>
+            <h3 style="font-size: 1.15rem; color: #1e3f20; font-weight: bold;">🐰 Rabbit Helper Management</h3>
+            <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.85rem;">Assign rabbits to automate your plots. Costs 1 ⚡ to reassign a standard rabbit.</p>
             
-            <div id="rabbit-management-container" style="max-width: 800px; margin: 25px auto 0;">
+            <div id="rabbit-management-container" style="max-width: 800px; margin: 15px auto 0;">
                 <!-- Rabbit assignments injected here -->
             </div>
         </div>
@@ -866,7 +867,7 @@
                                 plot.slots[s] = { cropType: null, progress: 0, isWatered: false, seedData: null };
                             }
                             stateChanged = true;
-                            showCustomNotification(`Automatic Plot Harvested`, `Your Rabbit Helper harvested Plot ${rab.assignedPlot + 1} entirely, using 1 AP!`);
+                            showCustomNotification("Automatic Plot Harvested", `Your Rabbit Helper harvested Plot ${rab.assignedPlot + 1} entirely, using 1 AP!`);
                         }
                     }
                 }
@@ -1470,6 +1471,33 @@
             triggerSaveGame(); window.openCropManager(typeKey); renderStorage(); updateHeader();
         };
 
+        window.sellAmounts = { honey: 1, piranhas: 1 };
+
+        window.updateSellAmount = function(item, delta) {
+            let max = item === 'honey' ? state.honey : state.piranhas;
+            window.sellAmounts[item] = Math.max(1, Math.min(max, (window.sellAmounts[item] || 1) + delta));
+            renderStorage();
+        };
+
+        window.executeSell = function(item) {
+            let amt = window.sellAmounts[item] || 1;
+            let max = item === 'honey' ? state.honey : state.piranhas;
+            if (amt > max) amt = max;
+            if (amt <= 0) return;
+
+            if (item === 'honey') {
+                state.honey -= amt;
+                state.coins += amt * 5;
+            } else if (item === 'piranhas') {
+                state.piranhas -= amt;
+                state.coins += amt * 5;
+            }
+            window.sellAmounts[item] = 1;
+            triggerSaveGame();
+            renderStorage();
+            updateHeader();
+        };
+
         window.extractCrop = function(typeKey, idx) {
             const crop = state.crops[typeKey].splice(idx, 1)[0];
             let newSeeds = [];
@@ -1579,11 +1607,11 @@
             const btnScience = document.getElementById('cat-btn-science');
             const btnPure = document.getElementById('cat-btn-pure');
             if (cat === 'science') {
-                btnScience.className = "px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition";
-                btnPure.className = "px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+                btnScience.className = "px-4 py-1.5 rounded-lg font-bold bg-emerald-500 text-white transition";
+                btnPure.className = "px-4 py-1.5 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
             } else {
-                btnScience.className = "px-4 py-2 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
-                btnPure.className = "px-4 py-2 rounded-lg font-bold bg-emerald-500 text-white transition";
+                btnScience.className = "px-4 py-1.5 rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+                btnPure.className = "px-4 py-1.5 rounded-lg font-bold bg-emerald-500 text-white transition";
             }
             renderQuizSelector();
         };
@@ -1642,6 +1670,55 @@
                 showCustomNotification("Archive Evaluation Complete", combinedMsg);
             } else {
                 showCustomNotification("Archive Evaluation Complete", baseMsg);
+            }
+        };
+
+        // --- QUANTITY ADJUSTMENT UTILITIES (WINDOW SCOPED) ---
+        window.adjustHoneySell = function(delta) {
+            if (typeof window.honeySellQty === 'undefined') window.honeySellQty = 1;
+            window.honeySellQty += delta;
+            if (window.honeySellQty < 1) window.honeySellQty = 1;
+            if (window.honeySellQty > state.honey) window.honeySellQty = Math.max(1, state.honey);
+            renderStorage();
+        };
+
+        window.setHoneySellMax = function() {
+            window.honeySellQty = Math.max(1, state.honey);
+            renderStorage();
+        };
+
+        window.sellHoney = function(qty) {
+            if (state.honey >= qty && qty > 0) {
+                state.honey -= qty;
+                state.coins += qty * 5;
+                window.honeySellQty = 1;
+                triggerSaveGame();
+                renderStorage();
+                updateHeader();
+            }
+        };
+
+        window.adjustPiranhaSell = function(delta) {
+            if (typeof window.piranhaSellQty === 'undefined') window.piranhaSellQty = 1;
+            window.piranhaSellQty += delta;
+            if (window.piranhaSellQty < 1) window.piranhaSellQty = 1;
+            if (window.piranhaSellQty > state.piranhas) window.piranhaSellQty = Math.max(1, state.piranhas);
+            renderStorage();
+        };
+
+        window.setPiranhaSellMax = function() {
+            window.piranhaSellQty = Math.max(1, state.piranhas);
+            renderStorage();
+        };
+
+        window.sellPiranhas = function(qty) {
+            if (state.piranhas >= qty && qty > 0) {
+                state.piranhas -= qty;
+                state.coins += qty * 5;
+                window.piranhaSellQty = 1;
+                triggerSaveGame();
+                renderStorage();
+                updateHeader();
             }
         };
 
@@ -1815,7 +1892,7 @@
                 const count = state.inventory[typeKey].length;
                 if(count > 0) {
                     seedsPresent = true; const def = CROP_TYPES[typeKey]; const div = document.createElement('div'); div.className = 'inventory-card';
-                    div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">${def.emoji}</div><strong>${def.name} Seeds</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Seeds: ${count}</p>`;
+                    div.innerHTML = `<div style="font-size:2.5rem; margin-bottom:4px;">${def.emoji}</div><strong>${def.name} Seeds</strong><p style="color:var(--text-muted); margin-top:2px; font-size:0.85rem;">Seeds: ${count}</p>`;
                     seedContainer.appendChild(div);
                 }
             });
@@ -1827,20 +1904,40 @@
                 const count = state.crops[typeKey].length;
                 if(count > 0) {
                     const def = CROP_TYPES[typeKey]; const div = document.createElement('div'); div.className = 'inventory-card';
-                    div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">${def.emoji}</div><strong>Harvested ${def.name}</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${count}</p><button onclick="openCropManager('${typeKey}')">Manage</button>`;
+                    div.innerHTML = `<div style="font-size:2.5rem; margin-bottom:4px;">${def.emoji}</div><strong>Harvested ${def.name}</strong><p style="color:var(--text-muted); margin-top:2px; font-size:0.85rem;">Stored: ${count}</p><button onclick="openCropManager('${typeKey}')">Manage</button>`;
                     cropContainer.appendChild(div);
                 }
             });
 
             if(state.honey > 0) {
+                window.sellAmounts = window.sellAmounts || { honey: 1, piranhas: 1 };
+                if (window.sellAmounts.honey > state.honey) window.sellAmounts.honey = state.honey;
+                let amt = window.sellAmounts.honey || 1;
+
                 const div = document.createElement('div'); div.className = 'inventory-card';
-                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🍯</div><strong>Honey Jars</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.honey}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.honey * 5; state.honey=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (5💰 each)</button>`;
+                div.innerHTML = `<div style="font-size:2.5rem; margin-bottom:4px;">🍯</div><strong>Honey Jars</strong><p style="color:var(--text-muted); margin-top:2px; font-size:0.85rem;">Stored: ${state.honey}</p>
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin: 6px 0;">
+                    <button style="width:28px; height:28px; padding:0; margin:0; background:#e2e8f0; color:#0f172a;" onclick="updateSellAmount('honey', -1)">-</button>
+                    <span style="font-weight:bold; min-width:20px;">${amt}</span>
+                    <button style="width:28px; height:28px; padding:0; margin:0; background:#e2e8f0; color:#0f172a;" onclick="updateSellAmount('honey', 1)">+</button>
+                </div>
+                <button style="background:#eab308; color:#0f172a; margin-top:0;" onclick="executeSell('honey')">Sell ${amt} (${amt * 5}💰)</button>`;
                 cropContainer.appendChild(div);
             }
 
             if(state.piranhas > 0) {
+                window.sellAmounts = window.sellAmounts || { honey: 1, piranhas: 1 };
+                if (window.sellAmounts.piranhas > state.piranhas) window.sellAmounts.piranhas = state.piranhas;
+                let amt = window.sellAmounts.piranhas || 1;
+
                 const div = document.createElement('div'); div.className = 'inventory-card';
-                div.innerHTML = `<div style="font-size:3rem; margin-bottom:8px;">🐟</div><strong>Piranhas</strong><p style="color:var(--text-muted); margin-top:5px; font-size:0.9rem;">Stored: ${state.piranhas}</p><button style="background:#eab308; color:#0f172a;" onclick="state.coins += state.piranhas * 5; state.piranhas=0; triggerSaveGame(); renderStorage(); updateHeader();">Sell All (5💰 each)</button>`;
+                div.innerHTML = `<div style="font-size:2.5rem; margin-bottom:4px;">🐟</div><strong>Piranhas</strong><p style="color:var(--text-muted); margin-top:2px; font-size:0.85rem;">Stored: ${state.piranhas}</p>
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin: 6px 0;">
+                    <button style="width:28px; height:28px; padding:0; margin:0; background:#e2e8f0; color:#0f172a;" onclick="updateSellAmount('piranhas', -1)">-</button>
+                    <span style="font-weight:bold; min-width:20px;">${amt}</span>
+                    <button style="width:28px; height:28px; padding:0; margin:0; background:#e2e8f0; color:#0f172a;" onclick="updateSellAmount('piranhas', 1)">+</button>
+                </div>
+                <button style="background:#eab308; color:#0f172a; margin-top:0;" onclick="executeSell('piranhas')">Sell ${amt} (${amt * 5}💰)</button>`;
                 cropContainer.appendChild(div);
             }
         }
@@ -1850,7 +1947,7 @@
             container.innerHTML = '';
             
             const allowedRabbits = state.completedSets >= 8 ? 3 : (state.completedSets >= 4 ? 2 : (state.completedSets >= 2 ? 1 : 0));
-            if (allowedRabbits === 0) { container.innerHTML = `<p style="text-align:center; color: var(--text-muted);">Complete at least 2 Quizzes to unlock a Rabbit Helper!</p>`; return; }
+            if (allowedRabbits === 0) { container.innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">Complete at least 2 Quizzes to unlock a Rabbit Helper!</p>`; return; }
 
             for (let i = 0; i < allowedRabbits; i++) {
                 const rabbit = state.rabbits[i];
@@ -1868,13 +1965,13 @@
                     <div class="rabbit-card">
                         <div class="rabbit-avatar">${isWarrior ? '🥷🐇' : '🐇'}</div>
                         <div class="rabbit-controls">
-                            <h4 style="color:#0f172a; margin-bottom:5px;">${isWarrior ? 'Warrior Rabbit' : 'Rabbit Helper ' + (i+1)}</h4>
+                            <h4 style="color:#0f172a; margin-bottom:5px; font-weight:bold;">${isWarrior ? 'Warrior Rabbit' : 'Rabbit Helper ' + (i+1)}</h4>
                             <div class="rabbit-control-row">
-                                <label style="font-size: 0.9rem; font-weight: bold; width: 60px;">Target:</label>
+                                <label style="font-size: 0.85rem; font-weight: bold; width: 60px;">Target:</label>
                                 <select class="rabbit-select" onchange="setRabbitPlot(${i}, this.value)" style="flex:1;">${plotOptions}</select>
                             </div>
                             <div class="rabbit-control-row">
-                                <label style="font-size: 0.9rem; font-weight: bold; width: 60px;">Task:</label>
+                                <label style="font-size: 0.85rem; font-weight: bold; width: 60px;">Task:</label>
                                 <select class="rabbit-select" onchange="setRabbitTask(${i}, this.value)" style="flex:1;">
                                     <option value="">Select Task</option>
                                     ${isWarrior 
@@ -1899,18 +1996,18 @@
                     const lastAttempt = state.quizzes[year]?.lastAttempt || 0;
                     const onCooldown = (Date.now() - lastAttempt) < COOLDOWN_MS;
                     const badgeHtml = onCooldown ? `<span class="status-badge" style="background:rgba(210,153,34,0.15); color:var(--warning);">Cooldown Active</span>` : `<span class="status-badge available">Available</span>`;
-                    div.innerHTML = `<div style="font-size:2rem;">📁</div><div>${year} Database</div>${badgeHtml}<div id="menu-timer-${year}" class="card-timer" style="display:none;"></div>`;
+                    div.innerHTML = `<div style="font-size:2rem;">📁</div><div class="text-sm font-bold">${year} Database</div>${badgeHtml}<div id="menu-timer-${year}" class="card-timer" style="display:none;"></div>`;
                     div.onclick = () => window.launchQuizWorkspace(year);
                     container.appendChild(div);
                 });
                 updateQuizMenuTimers();
             } else {
                 container.innerHTML = `
-                    <div class="col-span-full bg-white p-8 rounded-2xl border-2 border-dashed border-slate-300 text-center max-w-xl mx-auto my-6">
-                        <div class="text-5xl mb-4">🧬</div>
-                        <h4 class="text-xl font-bold text-slate-800 mb-2">Pure Biology Database</h4>
-                        <p class="text-slate-500 text-sm mb-4">The Pure Biology archives are currently sealed on this floor of the Tower. Keep clearing the Science (Biology) archives to discover more!</p>
-                        <div class="inline-block text-xs font-semibold px-3 py-1 bg-amber-100 text-amber-800 rounded-full">Coming Soon on Next Floor</div>
+                    <div class="col-span-full bg-white p-6 rounded-2xl border-2 border-dashed border-slate-300 text-center max-w-xl mx-auto my-4">
+                        <div class="text-4xl mb-3">🧬</div>
+                        <h4 class="text-lg font-bold text-slate-800 mb-1">Pure Biology Database</h4>
+                        <p class="text-slate-500 text-xs mb-3">The Pure Biology archives are currently sealed on this floor of the Tower. Keep clearing the Science (Biology) archives to discover more!</p>
+                        <div class="inline-block text-[10px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">Coming Soon on Next Floor</div>
                     </div>
                 `;
             }
