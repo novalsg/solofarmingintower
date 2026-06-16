@@ -37,11 +37,11 @@
 
         header {
             background: var(--sky-gradient); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--accent); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-bottom: 3px solid var(--accent); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;
         }
 
         .header-title h2 { font-size: 1.25rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; color: #0369a1; }
-        .header-stats { display: flex; gap: 12px; font-weight: bold; font-size: 0.95rem; background: var(--panel-bg); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--panel-border); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: center;}
+        .header-stats { display: flex; gap: 12px; font-weight: bold; font-size: 0.95rem; background: var(--panel-bg); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--panel-border); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: center; flex-wrap: wrap;}
         .coin-icon { color: #eab308; margin-right: 2px; }
         .ap-icon { color: #3b82f6; font-size: 1.1rem; }
 
@@ -257,6 +257,11 @@
             box-shadow: 0 0 8px rgba(251, 191, 38, 0.5);
         }
 
+        .music-controls {
+            display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 4px 10px; 
+            border-radius: 20px; border: 1px solid #cbd5e1;
+        }
+
         @media (max-width: 768px) { 
             header { flex-direction: column; gap: 10px; text-align: center; }
             .floating-view-toggle { bottom: 15px; right: 15px; font-size: 0.95rem; padding: 10px 20px; }
@@ -273,6 +278,7 @@
             .action-flex-group { flex-direction: column; }
             .view-section { padding: 15px; }
             .tool-bar { flex-direction: column; }
+            .music-controls { margin-top: 5px; justify-content: center; width: 100%; }
         }
     </style>
 </head>
@@ -291,6 +297,11 @@
         <div class="header-stats">
             <span id="stat-coins"><span class="coin-icon">💰</span>0 Tower Coins</span>
             <span id="stat-ap" title="Action Points (Recovers 1 per hour)"><span class="ap-icon">⚡</span>24 AP</span>
+            
+            <div class="music-controls">
+                <button id="bgm-toggle" onclick="toggleBgm()" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0;">🔇</button>
+                <input type="range" id="bgm-volume" min="0" max="1" step="0.1" value="0.3" onchange="changeVolume(this.value)" style="width: 70px; accent-color: var(--accent);">
+            </div>
         </div>
     </header>
 
@@ -505,21 +516,23 @@
         </div>
     </div>
 
+    <!-- Background Music Player -->
+    <audio id="bgm-audio" loop src="https://nu.vgmtreasurechest.com/soundtracks/doki-doki-literature-club-official-soundtrack/izzackus/1-01.%20Doki%20Doki%20Literature%20Club%21.mp3"></audio>
+
     <script type="module">
         let db, auth, currentUser, userDocRef;
         let isSaving = false;
         let cloudSaveTimer = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'solo-tower-farm-v2';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'solo-tower-farm-v3';
 
         let initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged;
         let getFirestore, doc, setDoc, getDoc;
 
-        // --- GAME DATA & STATE ---
+        // --- GAME DATA & DEFAULT STATE STRATEGY ---
         const GRADE_VALUES = { 1: 'E', 2: 'D', 3: 'C', 4: 'B', 5: 'A' };
         const GRADE_MULTI = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
         const ROT_MULTI = { 1: 0.33, 2: 0.66, 3: 1.0, 4: 1.33, 5: 1.66 };
 
-        // QUALITY MULTIPLIERS AFFECT GROWING DURATION (A: 20% faster, B: 10% faster, C: default, D: 10% slower, E: 20% slower)
         const QUALITY_MULTIPLIERS = { 
             5: 0.8, // A
             4: 0.9, // B
@@ -547,13 +560,10 @@
             "2016": { pdfUrl: "https://drive.google.com/file/d/17IROr-5z5cqYKi2Q3iRJ0lOa8Ilgy5UD/preview", answers: ["B","C","A","D","A","A","A","B","C","D","C","C","B","D","C","D","B","D","D","C"] }
         };
 
-        let state = {
-            coins: 0,
-            ap: 24,
-            lastApTime: Date.now(),
-            completedSets: 0,
-            lastSaveTime: Date.now(),
-            unlocked: { shop: false, rabbit: false, land: false, firstDiscountUsed: false, fire: false, pond: false, warriorRabbit: false, potUpgrade: false, recipes: false }, 
+        // Complete base template ensures new nested variables are generated successfully on upgrades
+        const defaultState = {
+            coins: 0, ap: 24, lastApTime: Date.now(), completedSets: 0, lastSaveTime: Date.now(),
+            unlocked: { shop: false, rabbit: false, land: false, firstDiscountUsed: false, fire: false, pond: false, warriorRabbit: false, potUpgrade: false, recipes: false, scrollSize: false, scrollQuality: false, scrollMagic: false }, 
             maxPlots: 1, 
             plots: [], 
             inventory: { greenOnion: [], tomato: [], potato: [] }, 
@@ -573,6 +583,7 @@
             shopSeedCounter: { greenOnion: 0, tomato: 0, potato: 0 }
         };
 
+        let state = JSON.parse(JSON.stringify(defaultState));
         let activeTab = 'farm';
         let currentWorkspaceMode = 'pdf';
         const COOLDOWN_MS = 12 * 60 * 60 * 1000; 
@@ -585,10 +596,13 @@
 
         // Persistent Staging Multi-select State
         let currentSeedingTypeKey = '';
-        let temporarySelectedSeedIndices = []; // Stores indices from state.inventory[currentSeedingTypeKey]
+        let temporarySelectedSeedIndices = []; 
 
         // Cooking State
         let potIngredients = []; 
+
+        // Audio State
+        let isMusicPlaying = false;
 
         async function initApp() {
             loadGameFromLocal();
@@ -609,18 +623,44 @@
             } catch(e) { startGameLogic(); }
         }
 
+        // Deep merge utility ensuring seamless updates when properties are added
+        function deepMergeState(target, source) {
+            for (const key in source) {
+                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key]) {
+                    Object.assign(target[key], source[key]);
+                } else {
+                    target[key] = source[key];
+                }
+            }
+            return target;
+        }
+
         function loadGameFromLocal() {
-            try { const saved = localStorage.getItem('soloTowerFarmingStatev8'); if (saved) state = { ...state, ...JSON.parse(saved) }; } catch(e) {}
+            try { 
+                let saved = localStorage.getItem('soloTowerFarmingSaveMaster');
+                if (!saved) {
+                    // Fallback to previous version key to migrate user gracefully
+                    saved = localStorage.getItem('soloTowerFarmingStatev8'); 
+                }
+                
+                if (saved) { 
+                    let parsed = JSON.parse(saved);
+                    state = deepMergeState(JSON.parse(JSON.stringify(defaultState)), parsed);
+                } 
+            } catch(e) {}
         }
 
         async function loadGameFromCloud() {
             if(!userDocRef || !getDoc) return;
-            try { const docSnap = await getDoc(userDocRef); if (docSnap.exists()) state = { ...state, ...docSnap.data() }; } catch (error) {}
+            try { 
+                const docSnap = await getDoc(userDocRef); 
+                if (docSnap.exists()) state = deepMergeState(state, docSnap.data()); 
+            } catch (error) {}
         }
 
         function triggerSaveGame() {
             updateHeader(); updateTeoBannerAdvisor(); state.lastSaveTime = Date.now();
-            try { localStorage.setItem('soloTowerFarmingStatev8', JSON.stringify(state)); } catch(e) {}
+            try { localStorage.setItem('soloTowerFarmingSaveMaster', JSON.stringify(state)); } catch(e) {}
             renderShop();
             if(!userDocRef || !currentUser || !setDoc) return;
             if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
@@ -633,16 +673,6 @@
         function startGameLogic() {
             document.getElementById('loading-screen').style.display = 'none';
 
-            // State Migrations & Counter Safety
-            if(typeof state.ap === 'undefined') state.ap = 24;
-            if(!state.buffs) state.buffs = { coinMulti: { active: false, expiry: 0 }, seeSize: { active: false, expiry: 0 }, seeQuality: { active: false, expiry: 0 }, seeMagic: { active: false, expiry: 0 } };
-            if(!state.buffs.seeQuality) state.buffs.seeQuality = { active: false, expiry: 0 };
-            if(!state.cooking) state.cooking = { active: false, endTime: 0, recipe: null, name: '' };
-            if(!state.potSize) state.potSize = 9;
-            if(!state.shopSeedCounter) state.shopSeedCounter = { greenOnion: 0, tomato: 0, potato: 0 };
-            if(typeof state.uncollectedHoney === 'undefined') state.uncollectedHoney = 0;
-            if(typeof state.piranhas === 'undefined') { state.piranhas = 0; state.pondPiranhas = 0; state.lastPondTime = Date.now(); }
-            
             // Expand Max Plots limits dynamically up to 6 Plots
             while(state.plots.length < 6) {
                 let initialSlots = []; for(let s=0; s<9; s++) initialSlots.push({ cropType: null, progress: 0, isWatered: false, seedData: null });
@@ -692,7 +722,6 @@
                         }
                     });
 
-                    // Automated harvest checks (Wait until all 9 crops are fully grown and ready)
                     if (rabbitTasks.harvest.has(plotIndex)) {
                         let allNineOccupied = true;
                         let allNineReady = true;
@@ -759,7 +788,6 @@
                 state.ap = Math.min(24, state.ap + 1); state.lastApTime += 3600000; stateChanged = true;
             }
 
-            // Pond regeneration (no cap limits!)
             if (state.unlocked.pond && now - state.lastPondTime >= 600000) {
                 state.pondPiranhas += 1; state.lastPondTime += 600000; stateChanged = true;
                 
@@ -779,14 +807,13 @@
                 showCustomNotification(`Campfire Cooking Completed`, `Your ${state.cooking.name} has finished cooking and its effects are now active!`);
             }
 
-            const speedMulti = state.buffs.seeQuality.active ? 3 : 1; 
+            const speedMulti = (state.buffs.seeQuality.active || state.unlocked.scrollQuality) ? 3 : 1; 
             state.plots.forEach((plot) => {
                 plot.slots.forEach((slot) => {
                     if (slot.cropType && slot.isWatered) { slot.progress += speedMulti; stateChanged = true; }
                 });
             });
 
-            // Automated Rabbit Mechanics
             const allowedRabbits = state.completedSets >= 4 ? 2 : (state.completedSets >= 2 ? 1 : 0);
             for(let i=0; i<allowedRabbits; i++) {
                 const rab = state.rabbits[i];
@@ -804,7 +831,6 @@
                         }
                     }
 
-                    // AP Harvest automation rule: Wait until all 9 plot slots are ready to execute 1-AP harvest
                     if (rab.task === 'harvest') {
                         let allNineOccupied = true;
                         let allNineReady = true;
@@ -871,7 +897,6 @@
             return h > 0 ? `${h.toString().padStart(2, '0')}:${m}:${s}` : `${m}:${s}`;
         }
 
-        // Box-Muller normal distribution centered around parent's respective stat (Clamped 1-5, independent)
         function generateNormalStat(parentStat) {
             let u = 0, v = 0;
             while(u === 0) u = Math.random();
@@ -887,7 +912,6 @@
             return `<span class="grade-badge ${cls}">${char}</span>`;
         }
 
-        // Shop baseline seeds start completely at Rank C (3) for all 3 properties
         function createShopSeed(type) {
             state.shopSeedCounter[type]++;
             const num = state.shopSeedCounter[type];
@@ -901,7 +925,6 @@
             };
         }
 
-        // Creating shop bags with baseline seeds
         function createShopSeedBag(type, count=9) {
             let bag = [];
             for(let i=0; i<count; i++) bag.push(createShopSeed(type));
@@ -933,6 +956,25 @@
             document.getElementById('game-alert-msg').innerHTML = message;
             document.getElementById('game-alert').style.display = 'flex';
         }
+
+        // --- MUSIC LOGIC ---
+        window.toggleBgm = function() {
+            const audio = document.getElementById('bgm-audio');
+            const icon = document.getElementById('bgm-toggle');
+            if (isMusicPlaying) {
+                audio.pause();
+                icon.innerText = '🔇';
+                isMusicPlaying = false;
+            } else {
+                audio.play().catch(e => console.log("Audio play blocked", e));
+                icon.innerText = '🔊';
+                isMusicPlaying = true;
+            }
+        };
+
+        window.changeVolume = function(val) {
+            document.getElementById('bgm-audio').volume = val;
+        };
 
         window.updateTeoSpeechText = function() {
             const bubble = document.getElementById('teo-speech');
@@ -1053,9 +1095,7 @@
             document.getElementById('modal-plant-type-select').style.display = 'flex';
         };
 
-        // Persistent selection logic (Selections maintained across modal closing parameters)
         function selectSeedTypeCategory(typeKey) {
-            // Keep existing selections if it is the same seed type, otherwise initialize empty
             if (currentSeedingTypeKey !== typeKey) {
                 currentSeedingTypeKey = typeKey;
                 temporarySelectedSeedIndices = [];
@@ -1079,21 +1119,19 @@
             const seeds = state.inventory[currentSeedingTypeKey];
             const def = CROP_TYPES[currentSeedingTypeKey];
 
-            // Cleanup indices that are now out of bounds (in case inventory size changed)
             temporarySelectedSeedIndices = temporarySelectedSeedIndices.filter(idx => idx < seeds.length);
 
             seeds.forEach((seed, idx) => {
                 const card = document.createElement('div');
                 card.id = `staged-seed-idx-${idx}`;
                 
-                // Determine persistent highlighted selection state
                 const isSelected = temporarySelectedSeedIndices.includes(idx);
                 card.className = isSelected ? 'staged-seed-box selected' : 'staged-seed-box';
                 card.onclick = () => toggleSelectSeedStaging(idx, emptySlotsCount);
 
-                let sHtml = state.buffs.seeSize.active ? getGradeBadge(seed.size) : `<span class="grade-badge grade-hidden">?</span>`;
-                let qHtml = state.buffs.seeQuality.active ? getGradeBadge(seed.quality) : `<span class="grade-badge grade-hidden">?</span>`;
-                let mHtml = state.buffs.seeMagic.active ? getGradeBadge(seed.spell) : `<span class="grade-badge grade-hidden">?</span>`;
+                let sHtml = (state.buffs.seeSize.active || state.unlocked.scrollSize) ? getGradeBadge(seed.size) : `<span class="grade-badge grade-hidden">?</span>`;
+                let qHtml = (state.buffs.seeQuality.active || state.unlocked.scrollQuality) ? getGradeBadge(seed.quality) : `<span class="grade-badge grade-hidden">?</span>`;
+                let mHtml = (state.buffs.seeMagic.active || state.unlocked.scrollMagic) ? getGradeBadge(seed.spell) : `<span class="grade-badge grade-hidden">?</span>`;
 
                 card.innerHTML = `
                     <div>
@@ -1197,7 +1235,6 @@
                 }
             });
 
-            // Splice matched seed bags from state inventories starting from highest indices
             Object.keys(groupedRemovals).forEach(typeKey => {
                 const indices = groupedRemovals[typeKey].sort((a,b) => b - a);
                 indices.forEach(idx => {
@@ -1205,7 +1242,6 @@
                 });
             });
 
-            // Wipes temporary selection array upon successful action execution
             temporarySelectedSeedIndices = [];
 
             closeModal('modal-plot-manager');
@@ -1425,7 +1461,6 @@
             triggerSaveGame(); window.openCropManager(typeKey); renderStorage(); updateHeader();
         };
 
-        // Genetic extraction: Generates 6 offspring seeds independently with Standard Normal variance centered on parent stats
         window.extractCrop = function(typeKey, idx) {
             const crop = state.crops[typeKey].splice(idx, 1)[0];
             let newSeeds = [];
@@ -1481,6 +1516,14 @@
                 state.coins -= cost; state.unlocked.recipes = true;
                 triggerSaveGame(); renderShop();
                 showCustomNotification("Recipe Acquired", `Teo: "You acquired the Secret Blueprint! Mix Crops, Piranhas, and Honey Jars together, nya!"`);
+            }
+        };
+
+        window.buyScroll = function(type, cost) {
+            if(state.coins >= cost && !state.unlocked[type]) {
+                state.coins -= cost; state.unlocked[type] = true;
+                triggerSaveGame(); renderShop();
+                showCustomNotification("Scroll Acquired", `Teo: "You've permanently unlocked the visions of ${type.replace('scroll', '')}, nya!"`);
             }
         };
 
@@ -1577,7 +1620,6 @@
             }
         };
 
-        // Keyboard arrow navigation
         document.addEventListener('keydown', (e) => {
             if (document.getElementById('fullscreen-quiz-container').style.display === 'flex') {
                 if(e.key === 'ArrowRight' && currentWorkspaceMode === 'pdf') window.toggleOptionBWorkspaceMode();
@@ -1593,9 +1635,9 @@
             buffTarget.innerHTML = '';
             const now = Date.now();
             if (state.buffs.coinMulti.active) buffTarget.innerHTML += `<span class="buff-badge">3xCoin ${formatTimeRemaining((state.buffs.coinMulti.expiry-now)/1000)}</span>`;
-            if (state.buffs.seeSize.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Size ${formatTimeRemaining((state.buffs.seeSize.expiry-now)/1000)}</span>`;
-            if (state.buffs.seeQuality.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Quality ${formatTimeRemaining((state.buffs.seeQuality.expiry-now)/1000)}</span>`;
-            if (state.buffs.seeMagic.active) buffTarget.innerHTML += `<span class="buff-badge">👁️Magic ${formatTimeRemaining((state.buffs.seeMagic.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeSize.active && !state.unlocked.scrollSize) buffTarget.innerHTML += `<span class="buff-badge">👁️Size ${formatTimeRemaining((state.buffs.seeSize.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeQuality.active && !state.unlocked.scrollQuality) buffTarget.innerHTML += `<span class="buff-badge">👁️Quality ${formatTimeRemaining((state.buffs.seeQuality.expiry-now)/1000)}</span>`;
+            if (state.buffs.seeMagic.active && !state.unlocked.scrollMagic) buffTarget.innerHTML += `<span class="buff-badge">👁️Magic ${formatTimeRemaining((state.buffs.seeMagic.expiry-now)/1000)}</span>`;
         }
 
         function renderTabs() {
@@ -1698,11 +1740,21 @@
             const container = document.getElementById('shop-container'); container.innerHTML = '';
             let goCost = 30; let goLabel = "Green Onion Seeds (x9)";
             if (!state.unlocked.firstDiscountUsed) { goCost = 10; goLabel = "🌟 First Pack Discount: Onion (x9)"; }
+            
             const storeItems = [
                 { id: 'buy_go', key: 'greenOnion', name: goLabel, cost: goCost, action: () => window.buySeeds('greenOnion', goCost, true) },
                 { id: 'buy_tm', key: 'tomato', name: "Cherry Tomato Seeds (x9)", cost: 100, action: () => window.buySeeds('tomato', 100) },
                 { id: 'buy_pt', key: 'potato', name: "Blue Moon Potato Seeds (x9)", cost: 300, action: () => window.buySeeds('potato', 300) }
             ];
+
+            // Calculate quiz threshold totals for shop logic
+            let count15 = 0, count18 = 0, count20 = 0;
+            Object.values(state.quizzes).forEach(q => {
+                if (q.score >= 15) count15++;
+                if (q.score >= 18) count18++;
+                if (q.score === 20) count20++;
+            });
+
             if (state.unlocked.land && state.maxPlots < 6) {
                 const landCost = 50 * Math.pow(3, state.maxPlots - 1);
                 storeItems.push({ id: 'buy_land', key: 'land', name: `Buy Land deed (Plot ${state.maxPlots + 1})`, cost: landCost, action: () => window.buyLand(landCost) });
@@ -1712,6 +1764,15 @@
             }
             if (state.completedSets >= 10 && !state.unlocked.recipes) {
                 storeItems.push({ id: 'buy_rec', key: 'recipe', name: `Secret Mystic Recipe`, cost: 1500, action: () => window.buyRecipes(1500) });
+            }
+            if (count15 >= 3 && !state.unlocked.scrollSize) {
+                storeItems.push({ id: 'buy_scr_sz', key: 'scrollSize', name: `📜 Scroll of Revealing Size`, cost: 100, action: () => window.buyScroll('scrollSize', 100) });
+            }
+            if (count18 >= 2 && !state.unlocked.scrollQuality) {
+                storeItems.push({ id: 'buy_scr_qu', key: 'scrollQuality', name: `📜 Scroll of Revealing Quality`, cost: 100, action: () => window.buyScroll('scrollQuality', 100) });
+            }
+            if (count20 >= 1 && !state.unlocked.scrollMagic) {
+                storeItems.push({ id: 'buy_scr_mg', key: 'scrollMagic', name: `📜 Scroll of Revealing Magic`, cost: 100, action: () => window.buyScroll('scrollMagic', 100) });
             }
 
             storeItems.forEach(item => {
